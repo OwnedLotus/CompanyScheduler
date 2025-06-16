@@ -1,0 +1,30 @@
+@page "/Calendar"
+@using System.Globalization
+<h3>Calendar</h3>
+
+<table>
+    <tr>
+        @foreach (DayOfWeek day in Enum.GetValues(typeof(DayOfWeek)))
+        {
+            <th>@day</th>
+        }    
+    </tr>
+    
+    
+</table>
+
+<p>@_dayOfFirst</p>
+<p></p>
+
+@code {
+    static GregorianCalendar _calendar = new GregorianCalendar();
+    private static readonly DateTime Today = DateTime.Now;
+    int _days = _calendar.GetDayOfMonth(Today);
+    static readonly DateTime FirstOfMonth = new DateTime(Today.Year, Today.Month, 1);
+
+    readonly DayOfWeek _dayOfFirst = FirstOfMonth.DayOfWeek;
+
+
+
+
+}

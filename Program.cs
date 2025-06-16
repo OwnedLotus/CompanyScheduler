@@ -16,3 +16,4 @@ builder.Services.AddOidcAuthentication(options =>
 });
 
 await builder.Build().RunAsync();
+//  put into imports  <!--@attribute [Microsoft.AspNetCore.Authorization.Authorize] -->
