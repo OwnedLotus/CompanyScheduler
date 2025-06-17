@@ -1,15 +1,17 @@
 {
   "version": 2,
-  "dgSpecHash": "p1cWJqb2wrs=",
+  "dgSpecHash": "fS/N6VDwMdk=",
   "success": true,
   "projectFilePath": "/home/jonahr/Documents/Code/Dotnet/CompanyScheduler/CompanyScheduler.Client/CompanyScheduler.Client.csproj",
   "expectedPackageFiles": [
     "/home/jonahr/.nuget/packages/microsoft.aspnetcore.authorization/9.0.4/microsoft.aspnetcore.authorization.9.0.4.nupkg.sha512",
     "/home/jonahr/.nuget/packages/microsoft.aspnetcore.components/9.0.4/microsoft.aspnetcore.components.9.0.4.nupkg.sha512",
     "/home/jonahr/.nuget/packages/microsoft.aspnetcore.components.analyzers/9.0.4/microsoft.aspnetcore.components.analyzers.9.0.4.nupkg.sha512",
+    "/home/jonahr/.nuget/packages/microsoft.aspnetcore.components.authorization/9.0.4/microsoft.aspnetcore.components.authorization.9.0.4.nupkg.sha512",
     "/home/jonahr/.nuget/packages/microsoft.aspnetcore.components.forms/9.0.4/microsoft.aspnetcore.components.forms.9.0.4.nupkg.sha512",
     "/home/jonahr/.nuget/packages/microsoft.aspnetcore.components.web/9.0.4/microsoft.aspnetcore.components.web.9.0.4.nupkg.sha512",
     "/home/jonahr/.nuget/packages/microsoft.aspnetcore.components.webassembly/9.0.4/microsoft.aspnetcore.components.webassembly.9.0.4.nupkg.sha512",
+    "/home/jonahr/.nuget/packages/microsoft.aspnetcore.components.webassembly.authentication/9.0.4/microsoft.aspnetcore.components.webassembly.authentication.9.0.4.nupkg.sha512",
     "/home/jonahr/.nuget/packages/microsoft.aspnetcore.metadata/9.0.4/microsoft.aspnetcore.metadata.9.0.4.nupkg.sha512",
     "/home/jonahr/.nuget/packages/microsoft.extensions.configuration/9.0.4/microsoft.extensions.configuration.9.0.4.nupkg.sha512",
     "/home/jonahr/.nuget/packages/microsoft.extensions.configuration.abstractions/9.0.4/microsoft.extensions.configuration.abstractions.9.0.4.nupkg.sha512",
