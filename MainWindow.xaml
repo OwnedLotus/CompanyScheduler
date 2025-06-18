@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="1280">
     <Grid>
-        <Label>
+        <Label Margin="40" FontSize="30">
             <TextBlock>
                 Please Login!
             </TextBlock>
@@ -16,23 +16,23 @@
             <StackPanel Orientation="Vertical" Margin="100,30,100,0" HorizontalAlignment="Center">
                 <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
                     <Label>
-                        <TextBlock x:Name="currLocationText">
+                        <TextBlock x:Name="currLocationText" FontSize="20">
                             Current Location: 
                         </TextBlock>
                     </Label>
                     <Label>
-                        <TextBlock x:Name="LocalText" >
+                        <TextBlock x:Name="LocalText" FontSize="20">
                             CurrentLocation
                         </TextBlock>
                     </Label>
                 </StackPanel>
                 <StackPanel Margin="20,0,20,0" Width="200">
-                    <TextBlock x:Name="userText">
+                    <TextBlock x:Name="userText" FontSize="20">
                         UserName:
                     </TextBlock>
                     <TextBox x:Name="userTextBox" Margin="0,15,0,15">
                     </TextBox>
-                    <TextBlock x:Name="passText">
+                    <TextBlock x:Name="passText" FontSize="20">
                         Password:
                     </TextBlock>
                     <TextBox x:Name="passTextBox" Margin="0,15,0,15">
