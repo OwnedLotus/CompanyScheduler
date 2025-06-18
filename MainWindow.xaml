@@ -7,6 +7,46 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-
+        <Label>
+            <TextBlock>
+                Please Login!
+            </TextBlock>
+        </Label>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Center">
+            <StackPanel Orientation="Vertical" Margin="100,30,100,0" HorizontalAlignment="Center">
+                <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Label>
+                        <TextBlock x:Name="currLocationText">
+                            Current Location: 
+                        </TextBlock>
+                    </Label>
+                    <Label>
+                        <TextBlock x:Name="LocalText" >
+                            CurrentLocation
+                        </TextBlock>
+                    </Label>
+                </StackPanel>
+                <StackPanel Margin="20,0,20,0" Width="200">
+                    <TextBlock x:Name="userText">
+                        UserName:
+                    </TextBlock>
+                    <TextBox x:Name="userTextBox" Margin="0,15,0,15">
+                    </TextBox>
+                    <TextBlock x:Name="passText">
+                        Password:
+                    </TextBlock>
+                    <TextBox x:Name="passTextBox" Margin="0,15,0,15">
+                    </TextBox>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Content="Login" Margin="20,0,20,0" Click="LoginButton_Clicked" />
+                        <Button Content="Quit" Margin="20,0,20,0" Click="QuitButton_Clicked" />
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+            <ListBox x:Name="LanguagesSelector" SelectionChanged="LanguagesSelector_SelectionChanged" MaxHeight="50" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <ListBoxItem>English</ListBoxItem>
+                <ListBoxItem>日本語</ListBoxItem>
+            </ListBox>
+        </StackPanel>
     </Grid>
 </Window>

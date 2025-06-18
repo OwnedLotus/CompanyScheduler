@@ -1614,11 +1614,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\C969Software2C#\\CompanyScheduler\\CompanyScheduler.csproj",
+      "projectUniqueName": "D:\\C969-Software2-C#\\CompanyScheduler\\CompanyScheduler.csproj",
       "projectName": "CompanyScheduler",
-      "projectPath": "D:\\C969Software2C#\\CompanyScheduler\\CompanyScheduler.csproj",
+      "projectPath": "D:\\C969-Software2-C#\\CompanyScheduler\\CompanyScheduler.csproj",
       "packagesPath": "C:\\Users\\Tampa Warehouse\\.nuget\\packages\\",
-      "outputPath": "D:\\C969Software2C#\\CompanyScheduler\\obj\\",
+      "outputPath": "D:\\C969-Software2-C#\\CompanyScheduler\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Tampa Warehouse\\AppData\\Roaming\\NuGet\\NuGet.Config"

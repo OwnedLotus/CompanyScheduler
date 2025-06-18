@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "N36DcjzxIEVxS+V1//9P/mdse97H5fZ9R+pU0f98wM8ZARu9llYYnUSMoK/356pGjza8zyAIi2zaWEQIOqzqrA==",
+  "dgSpecHash": "u1O6QmS2t5BjcX83fYEDR4ZbtS+NC0kszix08mwfCmwII0K/ggU50CiG7sN7OKgkgPcZ03cxhhDPjsd7B2iMcw==",
   "success": true,
-  "projectFilePath": "D:\\C969Software2C#\\CompanyScheduler\\CompanyScheduler.csproj",
+  "projectFilePath": "D:\\C969-Software2-C#\\CompanyScheduler\\CompanyScheduler.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Tampa Warehouse\\.nuget\\packages\\bouncycastle.cryptography\\2.5.1\\bouncycastle.cryptography.2.5.1.nupkg.sha512",
     "C:\\Users\\Tampa Warehouse\\.nuget\\packages\\google.protobuf\\3.30.0\\google.protobuf.3.30.0.nupkg.sha512",
