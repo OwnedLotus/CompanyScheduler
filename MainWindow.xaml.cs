@@ -24,11 +24,11 @@ public partial class MainWindow : Window
 {
     static readonly string filePath = "Login_History.txt";
     private string locEn = "Current Location: ";
-    private string locJp = "!!!!";
+    private string locJp = "現在地";
     private string loginEn = "Login";
-    private string loginJp = "!!!!";
+    private string loginJp = "ログイン";
     private string passEn = "Password";
-    private string passJp = "!!!!";
+    private string passJp = "パスワード";
     public string LabelText { get; private set; } = RegionInfo.CurrentRegion.DisplayName;
     private LoginLanguage loginLanguage = LoginLanguage.English;
 
