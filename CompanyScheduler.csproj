@@ -10,7 +10,10 @@
 
   <ItemGroup>
     <PackageReference Include="MySql.Data" Version="9.3.0" />
-    <Content Include="/Pages" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Pages\" />
   </ItemGroup>
 
 </Project>

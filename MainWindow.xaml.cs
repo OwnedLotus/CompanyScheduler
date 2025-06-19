@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CompanyScheduler.Models;
+using CompanyScheduler.Pages;
 
 namespace CompanyScheduler;
 
@@ -22,6 +23,7 @@ namespace CompanyScheduler;
 /// </summary>
 public partial class MainWindow : Window
 {
+    private Frame _mainFrame = new();
     static readonly string filePath = "Login_History.txt";
     private string locEn = "Current Location: ";
     private string locJp = "!!!!";
@@ -35,6 +37,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+
         LocalText.Text = LabelText;
 
         currLocationText.Text = locEn;
@@ -61,18 +64,23 @@ public partial class MainWindow : Window
 
     public void LanguagesSelector_SelectionChanged(Object sender, SelectionChangedEventArgs e)
     {
-        if (e is null || e.AddedItems is null || e.AddedItems[0] is null)
-            return;
-
-        loginLanguage = (LoginLanguage)e.AddedItems[0];
+        var selection = LanguagesSelector.SelectedIndex;
 
         // Change the UI language to the selected language
-        switch (loginLanguage)
+        switch (selection)
         {
-            case LoginLanguage.English:
+            case 0:
+                this.userText.Text = loginEn;
+                this.passText.Text = passEn;
+                this.currLocationText.Text = locEn;
                 break;
 
-            case LoginLanguage.Japanese:
+            case 1:
+                this.userText.Text = locJp;
+                this.passText.Text = passJp;
+                this.currLocationText.Text = locJp;
+                break;
+            default:
                 break;
         }
     }
