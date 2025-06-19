@@ -6,6 +6,6 @@
         xmlns:local="clr-namespace:CompanyScheduler.Pages"
         mc:Ignorable="d"
         Title="HomeWindow" Height="720" Width="1280">
-    <Grid>
+    <Grid x:Name="layoutHomeRoot">
     </Grid>
 </Window>

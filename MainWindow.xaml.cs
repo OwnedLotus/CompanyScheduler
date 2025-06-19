@@ -18,8 +18,7 @@ namespace CompanyScheduler;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml
-///
-///     TODO! Translate Login to different Language
+/// This is the login page for the application
 /// </summary>
 public partial class MainWindow : Window
 {
@@ -56,6 +55,8 @@ public partial class MainWindow : Window
             // Enter the application
             //this.Navigate(new Uri("New.xaml", UriKind.Relative));
             UpdateLoginLog(userTextBox.Text);
+            NavigationService navigationService = NavigationService.GetNavigationService(layoutRoot);
+            navigationService.Navigate(new HomeWindow());
         }
         else
         {

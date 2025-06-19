@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CompanyScheduler"
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="1280">
-    <Grid>
+    <Grid x:Name="layoutRoot">
         <Label Margin="40" FontSize="30">
             <TextBlock x:Name="welcomeText">
             </TextBlock>
