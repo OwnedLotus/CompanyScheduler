@@ -25,8 +25,10 @@ public partial class MainWindow : Window
 {
     private Frame _mainFrame = new();
     static readonly string filePath = "Login_History.txt";
+    private string welcomeEN = "Please Login!";
+    private string welcomeJP = "roguinshitekudasai";
     private string locEn = "Current Location: ";
-    private string locJp = "現在地";
+    private string locJp = "現在地:";
     private string loginEn = "Login";
     private string loginJp = "ログイン";
     private string passEn = "Password";
@@ -43,6 +45,7 @@ public partial class MainWindow : Window
         currLocationText.Text = locEn;
         userText.Text = loginEn;
         passText.Text = passEn;
+        welcomeText.Text = welcomeEN;
     }
 
     public void LoginButton_Clicked(Object sender, RoutedEventArgs e)
@@ -73,12 +76,15 @@ public partial class MainWindow : Window
                 this.userText.Text = loginEn;
                 this.passText.Text = passEn;
                 this.currLocationText.Text = locEn;
+                this.welcomeText.Text = welcomeEN;
+
                 break;
 
             case 1:
-                this.userText.Text = locJp;
+                this.userText.Text = loginJp;
                 this.passText.Text = passJp;
                 this.currLocationText.Text = locJp;
+                this.welcomeText.Text = welcomeJP;
                 break;
             default:
                 break;

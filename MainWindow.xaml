@@ -8,8 +8,7 @@
         Title="MainWindow" Height="720" Width="1280">
     <Grid>
         <Label Margin="40" FontSize="30">
-            <TextBlock>
-                Please Login!
+            <TextBlock x:Name="welcomeText">
             </TextBlock>
         </Label>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Center">
