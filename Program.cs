@@ -1,3 +1,5 @@
+using CompanyScheduler.Pages.Login;
+
 namespace CompanyScheduler;
 
 static class Program
