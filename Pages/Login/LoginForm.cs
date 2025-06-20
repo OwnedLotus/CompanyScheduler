@@ -1,0 +1,100 @@
+using System.Globalization;
+
+namespace CompanyScheduler.Pages.Login;
+
+/// <summary>
+/// This is the login form
+///
+///     Last thing todo is the
+///     Alert message translation
+///
+/// </summary>
+public partial class LoginForm : Form
+{
+    static readonly string filePath = "Login_History.txt";
+    private string welcomeEN = "Please Login!";
+    private string welcomeJP = "roguinshitekudasai";
+    private string locEn = "Current Location: ";
+    private string locJp = "現在地:";
+    private string loginEn = "Login: ";
+    private string loginJp = "ログイン";
+    private string passEn = "Password: ";
+    private string passJp = "パスワード";
+    private string quitEn = "Quit";
+
+    // TODO -> Kanji
+    private string quitJp = "SHUURYOU";
+    private string loginBtEn = "Login";
+    private string loginBtJp = "HAITE";
+    public string LabelText { get; private set; } = RegionInfo.CurrentRegion.DisplayName;
+
+    public LoginForm()
+    {
+        InitializeComponent();
+    }
+
+    private void LoginButton_Clicked(object sender, EventArgs e)
+    {
+        // Check if user is registered
+        if (userBox.Text == "test" && passBox.Text == "test")
+        {
+            // Enter the application
+            //this.Navigate(new Uri("New.xaml", UriKind.Relative));
+            UpdateLoginLog(userBox.Text);
+        }
+        else
+        {
+            // deny user entry
+
+            string message = "Username or Password was incorrect";
+            string caption = "Failed Login";
+            MessageBoxButtons buttons = MessageBoxButtons.OK;
+            MessageBox.Show(message, caption, buttons);
+        }
+    }
+
+    public void LanguagesSelector_SelectionChanged(object sender, EventArgs e)
+    {
+        var selection = selectionBox.SelectedIndex;
+
+        // Change the UI language to the selected language
+        switch (selection)
+        {
+            case 0:
+                userLabel.Text = loginEn;
+                passLabel.Text = passEn;
+                locationLabel.Text = locEn;
+                loginHeaderLabel.Text = welcomeEN;
+                quitButton.Text = quitEn;
+                loginButton.Text = loginBtEn;
+                break;
+
+            case 1:
+                userLabel.Text = loginJp;
+                passLabel.Text = passJp;
+                locationLabel.Text = locJp;
+                loginHeaderLabel.Text = welcomeJP;
+                quitButton.Text = quitJp;
+                loginButton.Text = loginBtJp;
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void UpdateLoginLog(string username)
+    {
+        using (StreamWriter sw = new(filePath, append: true))
+        {
+            sw.WriteLine($"{DateTime.UtcNow}: {userBox.Text}");
+        }
+    }
+
+    private void QuitButton_Clicked(object sender, EventArgs e) => Environment.Exit(0);
+}
+
+public enum LoginLanguage
+{
+    English,
+    Japanese
+}

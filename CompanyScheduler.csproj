@@ -18,8 +18,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Pages\Record\" />
+    <Folder Include="Pages\Record\Create" />
+    <Folder Include="Pages\Record\Update" />
+    <Folder Include="Pages\Record\Delete" />
+
+    <Folder Include="Pages\Login" />
+
     <Folder Include="Pages\Calendar\" />
-    <Folder Include="Pages\User\" />
+    <Folder Include="Pages\Calendar\Appointment\" />
+    <Folder Include="Pages\Calendar\Appointment\Create" />
+    <Folder Include="Pages\Calendar\Appointment\Update" />
+    <Folder Include="Pages\Calendar\Appointment\Delete" />
   </ItemGroup>
 
 </Project>
