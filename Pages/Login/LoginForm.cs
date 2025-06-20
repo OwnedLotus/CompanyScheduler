@@ -1,5 +1,7 @@
 using System.Globalization;
 
+using CompanyScheduler.Models;
+
 namespace CompanyScheduler.Pages.Login;
 
 /// <summary>
@@ -26,12 +28,11 @@ public partial class LoginForm : Form
     private string quitJp = "SHUURYOU";
     private string loginBtEn = "Login";
     private string loginBtJp = "HAITE";
+
+    private User _user = new();
     public string LabelText { get; private set; } = RegionInfo.CurrentRegion.DisplayName;
 
-    public LoginForm()
-    {
-        InitializeComponent();
-    }
+    public LoginForm() => InitializeComponent();
 
     private void LoginButton_Clicked(object sender, EventArgs e)
     {
@@ -39,8 +40,10 @@ public partial class LoginForm : Form
         if (userBox.Text == "test" && passBox.Text == "test")
         {
             // Enter the application
-            //this.Navigate(new Uri("New.xaml", UriKind.Relative));
             UpdateLoginLog(userBox.Text);
+            var home = new HomeForm();
+            home.Show();
+            Hide();
         }
         else
         {

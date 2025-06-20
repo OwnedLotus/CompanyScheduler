@@ -1,0 +1,111 @@
+﻿namespace CompanyScheduler.Pages;
+partial class HomeForm
+{
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.IContainer components = null;
+
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing && (components != null))
+        {
+            components.Dispose();
+        }
+        base.Dispose(disposing);
+    }
+
+    #region Windows Form Designer generated code
+
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
+        this.components = new System.ComponentModel.Container();
+        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+        this.ClientSize = new System.Drawing.Size(800, 450);
+        this.Text = "HomePage";
+
+        customerGridLabel = new()
+        {
+            AutoSize = true,
+            Name = "customerGridLabel",
+            Location = new Point(50, 10),
+            Text = "Available Customers"
+        };
+        customerGrid = new()
+        {
+            Name = "customerGrid",
+            Location = new Point(50, 30),
+        };
+
+        createCustomerButton = new()
+        {
+            Name = "createCustomerButton",
+            Location = new Point(50, 200),
+            Text = "Create"
+        };
+        updateCustomerButton = new() 
+        {
+            Name = "updateCustomerButton",
+            Location = new Point(180, 200),
+            Text = "Update"
+        };
+        deleteCustomerButton = new()
+        {
+            Name = "deleteCustomerButton",
+            Location = new Point(100, 240),
+            Text = "Delete"
+        };
+
+        appointmentListViewLabel = new()
+        {
+            AutoSize = true,
+            Name = "appointmentListViewLabel",
+            Location = new Point(400, 10),
+            Text = "Customer Appointments"
+        };
+        appointmentListView = new()
+        {
+            Name = "appointmentListView",
+            Location = new Point(400, 30)
+        };
+
+        quitButton = new()
+        {
+            Name = "quitButton",
+            Location = new Point(600, 400),
+            Text = "Quit"
+        };
+
+        Controls.Add(customerGridLabel);
+        Controls.Add(customerGrid);
+        Controls.Add(createCustomerButton);
+        Controls.Add(updateCustomerButton);
+        Controls.Add(deleteCustomerButton);
+
+        Controls.Add(appointmentListViewLabel);
+        Controls.Add(appointmentListView);
+
+        Controls.Add(quitButton);
+    }
+
+    #endregion
+
+    Label customerGridLabel;
+    DataGridView customerGrid;
+    Button createCustomerButton;
+    Button updateCustomerButton;
+    Button deleteCustomerButton;
+
+    Label appointmentListViewLabel;
+    ListView appointmentListView;
+
+    Button quitButton;
+}

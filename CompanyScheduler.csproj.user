@@ -1,4 +1,32 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup />
+  <ItemGroup>
+    <Compile Update="Pages\Calendar\Appointment\Create\AppointmentCreate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Pages\Calendar\Appointment\Delete\AppointmentDelete.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Pages\Calendar\Appointment\Update\AppointmentUpdate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Pages\Calendar\Calendar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Pages\HomeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Pages\Login\LoginForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Pages\Customer\Create\CustomerCreate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Pages\Customer\Delete\CustomerDelete.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Pages\Customer\Update\CustomerUpdate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
 </Project>
