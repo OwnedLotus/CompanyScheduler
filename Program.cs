@@ -1,5 +1,6 @@
 using CompanyScheduler.Pages.Login;
 using CompanyScheduler.Pages;
+using CompanyScheduler.Models;
 
 namespace CompanyScheduler;
 
@@ -14,6 +15,6 @@ static class Program
         // To customize application configuration such as set high DPI settings or default font,
         // see https://aka.ms/applicationconfiguration.
         ApplicationConfiguration.Initialize();
-        Application.Run(new HomeForm());
+        Application.Run(new HomeForm(new User()));
     }
 }

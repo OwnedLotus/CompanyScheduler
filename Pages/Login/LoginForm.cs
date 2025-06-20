@@ -41,7 +41,7 @@ public partial class LoginForm : Form
         {
             // Enter the application
             UpdateLoginLog(userBox.Text);
-            var home = new HomeForm();
+            var home = new HomeForm(new User());
             home.Show();
             Hide();
         }
