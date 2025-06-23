@@ -15,7 +15,7 @@ public partial class LoginForm : Form
 {
     static readonly string filePath = "Login_History.txt";
     private string welcomeEN = "Please Login!";
-    private string welcomeJP = "roguinshitekudasai";
+    private string welcomeJP = "ログインして下さい";
     private string locEn = "Current Location: ";
     private string locJp = "現在地:";
     private string loginEn = "Login: ";
@@ -25,9 +25,9 @@ public partial class LoginForm : Form
     private string quitEn = "Quit";
 
     // TODO -> Kanji
-    private string quitJp = "SHUURYOU";
+    private string quitJp = "終了";
     private string loginBtEn = "Login";
-    private string loginBtJp = "HAITE";
+    private string loginBtJp = "入て";
 
     private User _user = new();
     public string LabelText { get; private set; } = RegionInfo.CurrentRegion.DisplayName;
