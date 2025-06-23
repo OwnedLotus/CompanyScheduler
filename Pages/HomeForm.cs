@@ -9,6 +9,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CompanyScheduler.Pages;
 
+/// <summary>
+/// Form handeling main activities
+/// 
+/// TODO:
+///     Add Exception Handeling add update delete
+///     Add report functions
+/// </summary>
+
+
 public partial class HomeForm : Form
 {
     private BindingList<Appointment>? appointments;
@@ -82,6 +91,21 @@ public partial class HomeForm : Form
             context.Appointments.Add(_selectedAppointment);
             context.SaveChanges();
         }
+    }
+
+    private void GenerateAppointmentTypesByMonth()
+    {
+
+    }
+
+    private void GenerateSchedule()
+    {
+
+    }
+
+    private void GeneratePerCity(City city)
+    {
+
     }
 
     private void QuitButton_Clicked(object sender, EventArgs e) => Environment.Exit(0);

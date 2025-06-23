@@ -24,10 +24,17 @@ public partial class LoginForm : Form
     private string passJp = "パスワード";
     private string quitEn = "Quit";
 
-    // TODO -> Kanji
     private string quitJp = "終了";
     private string loginBtEn = "Login";
     private string loginBtJp = "入て";
+
+    private string messageFailedEn = "Username or Password do not match";
+    private string messageFailedJp = "ハンドルやパスワードは不正確です";
+
+    private string captionFailedEn = "Failed Login";
+    private string captionFailedJp = "ログイン失敗";
+
+    int selection = 0;
 
     private User _user = new();
     public string LabelText { get; private set; } = RegionInfo.CurrentRegion.DisplayName;
@@ -47,18 +54,21 @@ public partial class LoginForm : Form
         }
         else
         {
-            // deny user entry
-
-            string message = "Username or Password was incorrect";
-            string caption = "Failed Login";
-            MessageBoxButtons buttons = MessageBoxButtons.OK;
-            MessageBox.Show(message, caption, buttons);
+            switch (selection)
+            {
+                case 0:
+                    MessageBox.Show(messageFailedEn, captionFailedEn, MessageBoxButtons.OK);
+                    break;
+                case 1:
+                    MessageBox.Show(messageFailedJp, captionFailedJp, MessageBoxButtons.OK); 
+                    break;
+            }
         }
     }
 
     public void LanguagesSelector_SelectionChanged(object sender, EventArgs e)
     {
-        var selection = selectionBox.SelectedIndex;
+         selection = selectionBox.SelectedIndex;
 
         // Change the UI language to the selected language
         switch (selection)

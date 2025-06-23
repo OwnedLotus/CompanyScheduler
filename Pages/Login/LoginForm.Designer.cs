@@ -108,7 +108,7 @@ partial class LoginForm
         };
         selectionBox.BeginUpdate();
         selectionBox.Items.Add("English");
-        selectionBox.Items.Add("NIHONGO");
+        selectionBox.Items.Add("日本語");
         selectionBox.EndUpdate();
         selectionBox.SelectedIndexChanged += LanguagesSelector_SelectionChanged;
         SuspendLayout();
