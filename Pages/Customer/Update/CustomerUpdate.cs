@@ -91,6 +91,13 @@ public partial class CustomerUpdateForm : Form
             _mainForm.Show();
             Close();
         }
+        else
+        {
+            string message = "Failed to Update User";
+            string caption = "Malformed Input";
+            MessageBoxButtons buttons = MessageBoxButtons.OK;
+            MessageBox.Show(message, caption, buttons);
+        }
     }
 
     private void UpdateCustomerQuitButton_Click(object sender, EventArgs e)

@@ -82,6 +82,13 @@ public partial class CustomerCreateForm : Form
             _mainForm.Show();
             Close();
         }
+        else
+        {
+            string message = "Failed to Create Customer";
+            string caption = "Malformed Input";
+            MessageBoxButtons messageBoxButtons = MessageBoxButtons.OK;
+            MessageBox.Show(message, caption, messageBoxButtons);
+        }
     }
 
 
