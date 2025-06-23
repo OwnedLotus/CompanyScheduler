@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
+using System.Linq;
 
+using CompanyScheduler.Data;
 using CompanyScheduler.Models;
 using CompanyScheduler.Pages.Customers;
 
@@ -9,7 +11,7 @@ namespace CompanyScheduler.Pages;
 
 public partial class HomeForm : Form
 {
-    BindingList<Appointment>? appointments;
+    List<Appointment>? appointments;
     Appointment? _selectedAppointment;
 
     DbContext? dbContext = null;
@@ -26,7 +28,10 @@ public partial class HomeForm : Form
 
     private void LoadAppointments()
     {
-        appointments = [];
+        using (var context = new CompanyContext())
+        {
+            appointments = [.. context.Appointments.Include(a => a.User)];
+        }
     }
 
 
