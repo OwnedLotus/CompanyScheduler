@@ -11,10 +11,10 @@ namespace CompanyScheduler.Pages;
 
 public partial class HomeForm : Form
 {
-    List<Appointment>? appointments;
-    Appointment? _selectedAppointment;
+    private List<Appointment>? appointments;
+    private Appointment? _selectedAppointment;
 
-    DbContext? dbContext = null;
+    private readonly DbContext? dbContext;
 
 
     private User _user;
@@ -36,7 +36,17 @@ public partial class HomeForm : Form
 
     private void CreateCustomerButton_Clicked(object sender, EventArgs e)
     {
+        if (_selectedAppointment is null || dbContext is null)
+            return;
         var CreateCustomer = new CustomerCreateForm(_user, this);
+
+        using (var context = new CompanyContext())
+        {
+            CreateCustomer.CustomerCreated += (sender, customer) => _selectedAppointment.Customer = customer;
+            context.Appointments.Add(_selectedAppointment);
+            context.SaveChanges();
+        }
+
         CreateCustomer.Show();
         Hide();
     }
@@ -47,12 +57,31 @@ public partial class HomeForm : Form
             return;
 
         var UpdateCustomer = new CustomerUpdateForm(_user, _selectedAppointment.Customer, this);
+
+        using (var context = new CompanyContext())
+        {
+            context.Appointments.Remove(_selectedAppointment);
+            UpdateCustomer.CustomerUpdated += (sender, customer) => _selectedAppointment.Customer = customer;
+            context.Appointments.Add(_selectedAppointment);
+            context.SaveChanges();
+        }
+
         UpdateCustomer.Show();
         Hide();
     }
 
     private void DeleteCustomerButton_Clicked(object sender, EventArgs e)
     {
+        if (_selectedAppointment is null || _selectedAppointment.User is null)
+            return;
+
+        using (var context = new CompanyContext())
+        {
+            context.Appointments.Remove(_selectedAppointment);
+            _selectedAppointment.Customer = null;
+            context.Appointments.Add(_selectedAppointment);
+            context.SaveChanges();
+        }
     }
 
     private void QuitButton_Clicked(object sender, EventArgs e) => Environment.Exit(0);

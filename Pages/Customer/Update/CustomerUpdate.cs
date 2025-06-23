@@ -4,7 +4,7 @@ namespace CompanyScheduler.Pages.Customers;
 
 public partial class CustomerUpdateForm : Form
 {
-    public event EventHandler<Customer>? CustomerCreated;
+    public event EventHandler<Customer>? CustomerUpdated;
     private Customer _customer;
     private readonly User _user;
     private readonly Form _mainForm;
