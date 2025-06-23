@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CompanyScheduler.Models;
 
-public class City
+public class City()
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

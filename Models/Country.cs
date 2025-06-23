@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CompanyScheduler.Models;
 
-public class Country
+public class Country()
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -11,6 +11,6 @@ public class Country
     public string? CountryName { get; set; }
     public DateTimeOffset CreateDate { get; set; }
     public string? CreatedBy { get; set; }
-    public string LastUpdate { get; set; } = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
+    public string? LastUpdate { get; set; }
     public string? LastUpdateBy { get; set; }
 }

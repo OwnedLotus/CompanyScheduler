@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CompanyScheduler.Models;
 
-public class Appointment
+public class Appointment()
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -26,4 +26,21 @@ public class Appointment
     public string? CreatedBy { get; set; }
     public string LastUpdate { get; set; } = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
     public string? LastUpdateBy { get; set; }
+
+    public static bool CheckTextBoxes(string[] input)
+    {
+        foreach (string inputItem in input)
+        {
+            if (string.IsNullOrEmpty(inputItem))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static string UpdateFormat()
+    {
+        return DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
+    }
 }

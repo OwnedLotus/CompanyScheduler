@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CompanyScheduler.Models;
 
-public class Customer
+public class Customer()
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -14,6 +14,6 @@ public class Customer
     public byte Active { get; set; }
     public DateTimeOffset CreatedDate { get; set; }
     public string? CreatedBy { get; set; }
-    public string LastUpdate { get; set; } = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
+    public string? LastUpdate { get; set; } 
     public string? LastUpdateBy { get; set; }
 }
