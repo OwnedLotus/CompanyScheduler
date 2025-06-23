@@ -14,6 +14,10 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.6">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.3" />
   </ItemGroup>
 
@@ -25,7 +29,6 @@
     <Folder Include="Pages\Calendar\Appointment\" />
     <Folder Include="Pages\Calendar\Appointment\Create" />
     <Folder Include="Pages\Calendar\Appointment\Update" />
-    <Folder Include="Pages\Calendar\Appointment\Delete" />
   </ItemGroup>
 
 </Project>

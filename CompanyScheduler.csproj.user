@@ -4,9 +4,6 @@
     <Compile Update="Pages\Calendar\Appointment\Create\AppointmentCreate.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Pages\Calendar\Appointment\Delete\AppointmentDelete.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Update="Pages\Calendar\Appointment\Update\AppointmentUpdate.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -20,9 +17,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Pages\Customer\Create\CustomerCreate.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Pages\Customer\Delete\CustomerDelete.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Pages\Customer\Update\CustomerUpdate.cs">
