@@ -11,7 +11,7 @@ namespace CompanyScheduler.Pages;
 
 public partial class HomeForm : Form
 {
-    private List<Appointment>? appointments;
+    private BindingList<Appointment>? appointments;
     private Appointment? _selectedAppointment;
 
     private readonly DbContext? dbContext;
