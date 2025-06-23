@@ -51,18 +51,21 @@ partial class HomeForm
             Location = new Point(50, 200),
             Text = "Create"
         };
+        createCustomerButton.Click += CreateCustomerButton_Clicked;
         updateCustomerButton = new() 
         {
             Name = "updateCustomerButton",
             Location = new Point(180, 200),
             Text = "Update"
         };
+        updateCustomerButton.Click += UpdateCustomerButton_Clicked;
         deleteCustomerButton = new()
         {
             Name = "deleteCustomerButton",
             Location = new Point(100, 240),
             Text = "Delete"
         };
+        deleteCustomerButton.Click += DeleteCustomerButton_Clicked;
 
         appointmentListViewLabel = new()
         {

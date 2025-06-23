@@ -3,55 +3,52 @@
 using CompanyScheduler.Models;
 using CompanyScheduler.Pages.Customers;
 
+using Microsoft.EntityFrameworkCore;
+
 namespace CompanyScheduler.Pages;
 
 public partial class HomeForm : Form
 {
-    BindingList<Appointment> appointments = new();
-    BindingList<Customer> customers = new();
+    BindingList<Appointment>? appointments;
+    Appointment? _selectedAppointment;
+
+    DbContext? dbContext = null;
+
 
     private User _user;
 
     public HomeForm(User user)
     {
         InitializeComponent();
+        LoadAppointments();
         _user = user;
-
-        appointments = LoadAppointments();
-        customers = LoadCustomers();
     }
 
-    public BindingList<Appointment> LoadAppointments()
+    private void LoadAppointments()
     {
-        BindingList<Appointment> appointments = [];
-        return appointments;
+        appointments = [];
     }
 
-    public BindingList<Customer> LoadCustomers()
-    {
-        BindingList<Customer> customers = [];
-        return customers;
-    }
 
     private void CreateCustomerButton_Clicked(object sender, EventArgs e)
     {
-        var CreateCustomer = new CustomerCreateForm(_user);
+        var CreateCustomer = new CustomerCreateForm(_user, this);
         CreateCustomer.Show();
         Hide();
     }
 
     private void UpdateCustomerButton_Clicked(object sender, EventArgs e)
     {
-        var UpdateCustomer = new CustomerUpdateForm(_user);
+        if (_selectedAppointment is null || _selectedAppointment.Customer is null)
+            return;
+
+        var UpdateCustomer = new CustomerUpdateForm(_user, _selectedAppointment.Customer, this);
         UpdateCustomer.Show();
         Hide();
     }
 
     private void DeleteCustomerButton_Clicked(object sender, EventArgs e)
     {
-        var DeleteCustomer = new CustomerDeleteForm(_user);
-        DeleteCustomer.Show();
-        Hide();
     }
 
     private void QuitButton_Clicked(object sender, EventArgs e) => Environment.Exit(0);
