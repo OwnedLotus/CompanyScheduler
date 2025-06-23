@@ -34,7 +34,6 @@ public partial class HomeForm : Form
         }
     }
 
-
     private void CreateCustomerButton_Clicked(object sender, EventArgs e)
     {
         var CreateCustomer = new CustomerCreateForm(_user, this);
