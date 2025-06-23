@@ -7,19 +7,12 @@ namespace CompanyScheduler.Data;
 
 public class CompanyContext : DbContext
 {
-    private readonly string? _connectionString;
+    static readonly string connectionString = "Server=localhost; User ID=root; Password=pass; Database=blog";
 
-    public CompanyContext(DbContextOptions<CompanyContext> options, IConfiguration configuration)
-        : base(options) 
-    {
-        _connectionString = configuration.GetConnectionString("DefaultConnection");
-    }
-
-    public DbSet<Appointment> Appointments => Set<Appointment>();
+    public DbSet<Appointment> Appointments { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        var serverVersion = new MySqlServerVersion(new Version(8, 0, 34));
-        optionsBuilder.UseMySql(_connectionString,serverVersion);
+        optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
     }
 }
