@@ -6,6 +6,7 @@ namespace CompanyScheduler.Models;
 public class Appointment
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int AppointmentId { get; set; }
 
     [ForeignKey("CustomerId")]
@@ -19,9 +20,9 @@ public class Appointment
     public string? Contact { get; set; }
     public string? Type { get; set; }
     public Uri? Url { get; set; }
-    public DateTime Start { get; set; }
-    public DateTime End { get; set; }
-    public DateTime CreateDate { get; set; }
+    public DateTimeOffset Start { get; set; }
+    public DateTimeOffset End { get; set; }
+    public DateTimeOffset CreateDate { get; set; }
     public string? CreatedBy { get; set; }
     public string LastUpdate { get; set; } = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
     public string? LastUpdateBy { get; set; }
