@@ -86,6 +86,7 @@ partial class HomeForm
             Location = new Point(600, 400),
             Text = "Quit"
         };
+        quitButton.Click += QuitButton_Clicked;
 
         Controls.Add(customerGridLabel);
         Controls.Add(customerGrid);
