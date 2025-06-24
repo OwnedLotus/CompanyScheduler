@@ -1,5 +1,4 @@
 using System.Globalization;
-
 using CompanyScheduler.Models;
 
 namespace CompanyScheduler.Pages.Login;
@@ -60,7 +59,7 @@ public partial class LoginForm : Form
                     MessageBox.Show(messageFailedEn, captionFailedEn, MessageBoxButtons.OK);
                     break;
                 case 1:
-                    MessageBox.Show(messageFailedJp, captionFailedJp, MessageBoxButtons.OK); 
+                    MessageBox.Show(messageFailedJp, captionFailedJp, MessageBoxButtons.OK);
                     break;
             }
         }
@@ -68,7 +67,7 @@ public partial class LoginForm : Form
 
     public void LanguagesSelector_SelectionChanged(object sender, EventArgs e)
     {
-         selection = selectionBox.SelectedIndex;
+        selection = selectionBox.SelectedIndex;
 
         // Change the UI language to the selected language
         switch (selection)
