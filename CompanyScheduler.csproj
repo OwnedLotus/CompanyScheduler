@@ -24,11 +24,6 @@
   <ItemGroup>
 
     <Folder Include="Pages\Login" />
-
-    <Folder Include="Pages\Calendar\" />
-    <Folder Include="Pages\Calendar\Appointment\" />
-    <Folder Include="Pages\Calendar\Appointment\Create" />
-    <Folder Include="Pages\Calendar\Appointment\Update" />
   </ItemGroup>
 
 </Project>
