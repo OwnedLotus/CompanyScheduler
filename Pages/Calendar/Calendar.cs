@@ -1,107 +1,75 @@
+using System.ComponentModel;
 using System.Globalization;
+using CompanyScheduler.Data;
+using CompanyScheduler.Models;
+using CompanyScheduler.Pages.Calendar.Appointments;
+using Microsoft.EntityFrameworkCore;
 
 namespace CompanyScheduler.Pages.Calendar;
 
 public partial class CalendarForm : Form
 {
     private readonly DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+
+    DateTimeOffset? selectedDate;
+
     readonly GregorianCalendar calendar = new();
-    private DayCalendar[,] days = new DayCalendar[5,7];
+
     private Form _homeForm;
 
+    BindingList<Customer> _Customers = new();
+    BindingList<Appointment> appointments = new();
 
     public CalendarForm(Form homeForm)
     {
-        _homeForm = homeForm;
-
         InitializeComponent();
+        LoadCustomers();
 
-        today = today.AddMonths(-1);
-
-        monthLabel.Text = DateTime.Now.ToString("MMMM");
-
-        LoadCalendar();
-        DrawDays();
+        _homeForm = homeForm;
+        customerListBox.DataSource = _Customers;
     }
 
-    private void LoadCalendar()
+    private void DatePicker_ValueChanged(object sender, EventArgs e)
     {
-        uint counter = 1;
-        for (int i = 0; i < days.GetLength(0); i++)
-        {
-            for (int j = 0; j < days.GetLength(1); j++)
-            {
-                days[i, j] = new(new Point((j+1) * 50, (i+1) * 50), new Size(40, 40), $"{counter}");
-                counter++;
-            }
-        }
+        selectedDate = datePicker.Value.ToUniversalTime();
+
+        // if (selectedDate is not null)
+        //     using (var context = new CompanyContext())
+        //     {
+        //         appointments = [.. context.Appointments.Where(apt => apt.Start == selectedDate)];
+        //     }
+
+        appointmentListBox.DataSource = appointments;
     }
 
-    private void DrawDays()
+    // private void TimePicker_ValueChanged(object sender, EventArgs e)
+    // {
+    //    throw new NotImplementedException();
+    // }
+
+    private void LoadCustomers()
     {
-        foreach (DayCalendar day in days)
-        {
-            day.DrawDay(Controls);
-        }
+        //using (var context = new CompanyContext())
+        //{
+        //    Customers = [..context.Customers];
+        //}
     }
 
     private void QuitButton_Click(object sender, EventArgs e)
     {
-        throw new NotImplementedException();
+        _homeForm.Show();
+        Close();
     }
 
     private void AddAppointmentButton_Clicked(object sender, EventArgs e)
     {
-        throw new NotImplementedException();
+        var addAppointmentForm = new AppointmentCreate(this, new User(), new Customer());
+        addAppointmentForm.Show();
+        Hide();
     }
 
     private void updateAppointmentButton_Clicked(object sender, EventArgs e)
     {
         throw new NotImplementedException();
-    }
-}
-
-public class DayCalendar
-{
-    public string Name { get; set; }
-    public string DateNum { get; set; }
-    public Point Pos { get; set; }
-    public Panel Panel { get; set; }
-    public Label Date { get; set; }
-    public bool Selected { get; set; }
-
-    public DayCalendar(Point position,Size size, string dateNum)
-    {
-        Name = dateNum + "date";
-        DateNum = dateNum;
-
-        Pos = position;
-
-        Panel = new()
-        {
-            Size = size,
-            BorderStyle = BorderStyle.FixedSingle,
-            BackColor = Color.White,
-            Location = position
-        };
-        Panel.Click += PanelDay_Clicked;
-        Date = new()
-        {
-            Location = position,
-            Text = dateNum,
-            AutoSize = true
-        };
-    }
-
-    private void PanelDay_Clicked(object? sender, EventArgs e)
-    {
-        Selected = true;
-        Panel.BackColor = Color.Blue;
-    }
-
-    internal void DrawDay(Control.ControlCollection controls)
-    {
-        controls.Add(Date);
-        controls.Add(Panel);
     }
 }

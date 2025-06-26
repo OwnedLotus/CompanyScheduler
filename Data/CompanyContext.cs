@@ -10,9 +10,11 @@ public class CompanyContext : DbContext
     static readonly string connectionString = "Server=localhost; User ID=root; Password=pass; Database=blog";
 
     public DbSet<Appointment> Appointments { get; set; }
+    public DbSet<Customer> Customers { get; set; }
+    public DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+        //optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
     }
 }

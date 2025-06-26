@@ -29,18 +29,37 @@ partial class CalendarForm
             Text = "Appointments"
         };
 
-        monthLabel = new()
+        datePicker = new()
         {
-            Location = new Point(550, 10),
-            Name = "monthLabel",
-            AutoSize = true,
-            Text = "Month"
+            Location = new Point(20, 50),
+            Format = DateTimePickerFormat.Long,
+            Size = new Size(200, 30),
+            Name = "datePicker"
+        };
+
+        datePicker.ValueChanged += DatePicker_ValueChanged;
+
+        //timePicker = new()
+        //{
+        //    Location = new Point(20, 80),
+        //    Format = DateTimePickerFormat.Time,
+        //    CustomFormat = "HH:mm",
+        //    Name = "timePicker"
+        //};
+
+        //datePicker.ValueChanged += TimePicker_ValueChanged;
+
+        customerListBox = new()
+        {
+            Location = new Point(450, 50),
+            Size = new Size(125, 200),
+            Name = "customerListBox"
         };
 
         appointmentListBox = new()
         {
-            Location = new Point(450, 50),
-            Size = new Size(150, 200),
+            Location = new Point(600, 50),
+            Size = new Size(125, 200),
             Name = "appointmentListBox"
         };
 
@@ -68,7 +87,11 @@ partial class CalendarForm
         updateAppointmentButton.Click += updateAppointmentButton_Clicked;
 
         Controls.Add(titleLabel);
-        Controls.Add(monthLabel);
+
+        Controls.Add(datePicker);
+        //Controls.Add(timePicker);
+
+        Controls.Add(customerListBox);
         Controls.Add(appointmentListBox);
         Controls.Add(quitButton);
         Controls.Add(addAppointmentButton);
@@ -76,11 +99,16 @@ partial class CalendarForm
     }
 
 
+
     Label titleLabel;
-    Label monthLabel;
+
+    DateTimePicker datePicker;
+    //DateTimePicker timePicker;
+
     Button addAppointmentButton;
     Button updateAppointmentButton;
     Button quitButton;
 
     ListBox appointmentListBox;
+    ListBox customerListBox;
 }

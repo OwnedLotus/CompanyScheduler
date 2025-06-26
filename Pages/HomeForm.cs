@@ -23,13 +23,13 @@ public partial class HomeForm : Form
     private BindingList<Appointment>? appointments;
     private Appointment? _selectedAppointment;
 
-    private User _user;
+    public User User { get; private set; }
 
     public HomeForm(User user)
     {
         InitializeComponent();
         LoadAppointments();
-        _user = user;
+        User = user;
     }
 
     private void LoadAppointments()
@@ -44,7 +44,7 @@ public partial class HomeForm : Form
     {
         if (_selectedAppointment is null)
             return;
-        var CreateCustomer = new CustomerCreateForm(_user, this);
+        var CreateCustomer = new CustomerCreateForm(User, this);
 
         using (var context = new CompanyContext())
         {
@@ -62,7 +62,7 @@ public partial class HomeForm : Form
         if (_selectedAppointment is null || _selectedAppointment.Customer is null)
             return;
 
-        var UpdateCustomer = new CustomerUpdateForm(_user, _selectedAppointment.Customer, this);
+        var UpdateCustomer = new CustomerUpdateForm(User, _selectedAppointment.Customer, this);
 
         using (var context = new CompanyContext())
         {
