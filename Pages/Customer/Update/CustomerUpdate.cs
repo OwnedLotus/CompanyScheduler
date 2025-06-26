@@ -8,6 +8,7 @@ public partial class CustomerUpdateForm : Form
     public Customer Customer { get; private set; }
     public User User { get; private set; }
     private readonly Form _mainForm;
+
     public CustomerUpdateForm(User user, Customer customer, Form mainForm)
     {
         InitializeComponent();
@@ -36,19 +37,17 @@ public partial class CustomerUpdateForm : Form
         var customerCountryName = updateCountryNameTextBox.Text;
         var customerPhone = updateAddressPhoneTextBox.Text;
 
-        string[] inputs = [
-                customerName,
-                customerAddress1,
-                customerAddress2,
-                customerPostal,
-                customerCityName,
-                customerCountryName
-            ];
+        string[] inputs =
+        [
+            customerName,
+            customerAddress1,
+            customerAddress2,
+            customerPostal,
+            customerCityName,
+            customerCountryName
+        ];
 
-        if (
-            Appointment.CheckTextBoxes(inputs) ||
-            Address.OnlyDigitsAndDashes(customerPhone)
-            )
+        if (Appointment.CheckTextBoxes(inputs) || Address.OnlyDigitsAndDashes(customerPhone))
         {
             var country = new Country()
             {

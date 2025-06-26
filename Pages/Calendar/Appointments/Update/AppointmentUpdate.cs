@@ -4,25 +4,22 @@ namespace CompanyScheduler.Pages.Calendar.Appointments;
 
 public partial class AppointmentUpdateForm : Form
 {
-
     public EventHandler<Appointment>? AppointmentCreated;
     private Appointment _appointment;
     private Appointment[] allAppointments;
     private readonly Form previousForm;
-    private Customer _customer;
-    private User _user;
+    private Customer? _customer;
+    private User? _user;
 
     private DateOnly selectedDate = new();
     private TimeOnly selectedTime = new();
     private TimeOnly selectedDuration = new();
 
-    public AppointmentUpdateForm(Form prevForm, User user, Customer customer, Appointment appointment, Appointment[] appointments)
+    public AppointmentUpdateForm(Form prevForm, Appointment appointment, Appointment[] appointments, User user)
     {
         InitializeComponent();
 
         previousForm = prevForm;
-        _customer = customer;
-        _user = user;
         allAppointments = appointments;
 
         _appointment = appointment;
@@ -37,6 +34,9 @@ public partial class AppointmentUpdateForm : Form
         datePicker.Value = appointment.Start.ToLocalTime().LocalDateTime;
         timePicker.Value = appointment.Start.ToLocalTime().LocalDateTime;
         durationPicker.Value = appointment.End.Subtract(appointment.Start).Minutes;
+
+        _customer = appointment.Customer;
+        _user = user;
     }
 
     /// <summary>
@@ -77,7 +77,23 @@ public partial class AppointmentUpdateForm : Form
     /// <returns></returns>
     private bool ValidateScheduleConflict(DateOnly date, TimeOnly time, decimal duration)
     {
-        return false;
+        // all appointments are in utc
+        var start = new DateTimeOffset(date, time, TimeSpan.Zero).ToUniversalTime();
+        var end = new DateTimeOffset(date,time, TimeSpan.FromMinutes((double)duration)).ToUniversalTime();
+
+        foreach (var appointment in allAppointments)
+        {
+            // if is the same customer and the schedules conflict
+            if ( appointment.Customer == _customer 
+                && 
+                ((appointment.Start <= start && start <= appointment.End)
+                || (appointment.Start <= end && end <= appointment.End)
+                || (appointment.Start <= start && end <= appointment.End)
+                || (start <= appointment.Start &&  appointment.End <= end))
+                )
+                return false;
+        }
+        return true;
     }
 
     private void SaveAppointmentButton_Clicked(object sender, EventArgs e)
@@ -89,14 +105,7 @@ public partial class AppointmentUpdateForm : Form
         var type = typeTextBox.Text;
         var url = urlTextBox.Text;
 
-        string[] inputs = [
-            title,
-            description,
-            location,
-            contact,
-            type,
-            url
-        ];
+        string[] inputs = [title, description, location, contact, type, url];
 
         var selectedDate = DateOnly.FromDateTime(datePicker.Value);
         var selectedTime = TimeOnly.FromDateTime(timePicker.Value);
@@ -107,7 +116,20 @@ public partial class AppointmentUpdateForm : Form
             || ValidateTime(selectedTime)
             || ValidateDate(selectedDate)
             || ValidateScheduleConflict(selectedDate, selectedTime, selectedDuration)
-        ) { }
+        ) {
+            _appointment.Title = title;
+            _appointment.Description = description;
+            _appointment.Location = location;
+            _appointment.Contact = contact;
+            _appointment.Type = type;
+            _appointment.Url = new Uri(url);
+            _appointment.Start = new DateTime(selectedDate, selectedTime).ToUniversalTime();
+            _appointment.End = _appointment.Start.AddMinutes((double)selectedDuration).ToUniversalTime();
+            _appointment.CreateDate = DateTimeOffset.UtcNow;
+            _appointment.LastUpdate = Appointment.UpdateFormat();
+            _appointment.LastUpdateBy = _user?.UserName;
+
+        }
     }
 
     private void QuitAppointmentButton_Clicked(object sender, EventArgs e)

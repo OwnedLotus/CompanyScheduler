@@ -1,4 +1,5 @@
-﻿namespace CompanyScheduler.Pages;
+﻿
+namespace CompanyScheduler.Pages;
 partial class HomeForm
 {
     /// <summary>
@@ -49,21 +50,24 @@ partial class HomeForm
         {
             Name = "createCustomerButton",
             Location = new Point(50, 200),
-            Text = "Create"
+            Text = "Create Customer",
+            AutoSize = true
         };
         createCustomerButton.Click += CreateCustomerButton_Clicked;
-        updateCustomerButton = new() 
+        updateCustomerButton = new()
         {
             Name = "updateCustomerButton",
-            Location = new Point(180, 200),
-            Text = "Update"
+            Location = new Point(50, 230),
+            Text = "Update Customer",
+            AutoSize = true
         };
         updateCustomerButton.Click += UpdateCustomerButton_Clicked;
         deleteCustomerButton = new()
         {
             Name = "deleteCustomerButton",
-            Location = new Point(100, 240),
-            Text = "Delete"
+            Location = new Point(50, 260),
+            Text = "Delete Customer",
+            AutoSize = true
         };
         deleteCustomerButton.Click += DeleteCustomerButton_Clicked;
 
@@ -79,6 +83,15 @@ partial class HomeForm
             Name = "appointmentListView",
             Location = new Point(400, 30)
         };
+
+        appointmentsButton = new()
+        {
+            Name = "appointmentsButton",
+            Location = new Point(400, 150),
+            AutoSize = true,
+            Text = "Appointments"
+        };
+        appointmentsButton.Click += AppointmentsButton_Clicked;
 
         quitButton = new()
         {
@@ -97,10 +110,15 @@ partial class HomeForm
         Controls.Add(appointmentListViewLabel);
         Controls.Add(appointmentListView);
 
+        Controls.Add(appointmentsButton);
+
         Controls.Add(quitButton);
     }
 
+
+
     #endregion
+
 
     Label customerGridLabel;
     DataGridView customerGrid;
@@ -110,6 +128,8 @@ partial class HomeForm
 
     Label appointmentListViewLabel;
     ListView appointmentListView;
+
+    Button appointmentsButton;
 
     Button quitButton;
 }

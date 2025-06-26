@@ -1,5 +1,4 @@
 using System.Text.RegularExpressions;
-
 using CompanyScheduler.Models;
 
 namespace CompanyScheduler.Pages.Customers;
@@ -10,8 +9,9 @@ public partial class CustomerCreateForm : Form
     public Customer Customer { get; private set; } = new();
     public User User { get; private set; }
     private readonly Form _mainForm;
-    public CustomerCreateForm(User user, Form mainForm) 
-    { 
+
+    public CustomerCreateForm(User user, Form mainForm)
+    {
         InitializeComponent();
         User = user;
         _mainForm = mainForm;
@@ -27,19 +27,17 @@ public partial class CustomerCreateForm : Form
         var customerCountryName = addCountryNameTextBox.Text;
         var customerPhone = addAddressPhoneTextBox.Text;
 
-        string[] inputs = [
-                customerName,
-                customerAddress1,
-                customerAddress2,
-                customerPostal,
-                customerCityName,
-                customerCountryName
-            ];
+        string[] inputs =
+        [
+            customerName,
+            customerAddress1,
+            customerAddress2,
+            customerPostal,
+            customerCityName,
+            customerCountryName
+        ];
 
-        if (
-            Appointment.CheckTextBoxes(inputs) ||
-            Address.OnlyDigitsAndDashes(customerPhone)
-            )
+        if (Appointment.CheckTextBoxes(inputs) || Address.OnlyDigitsAndDashes(customerPhone))
         {
             var country = new Country()
             {
@@ -91,13 +89,9 @@ public partial class CustomerCreateForm : Form
         }
     }
 
-
-
     private void AddCustomerQuitButton_Click(object sender, EventArgs e)
     {
         _mainForm.Show();
         Close();
     }
-
-
 }

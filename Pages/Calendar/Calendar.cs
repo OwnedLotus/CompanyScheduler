@@ -11,41 +11,49 @@ public partial class CalendarForm : Form
 {
     private readonly DateOnly today = DateOnly.FromDateTime(DateTime.Now);
 
-    DateTimeOffset? selectedDate;
+    DateOnly? selectedDate;
 
-    readonly GregorianCalendar calendar = new();
+    readonly GregorianCalendar calendar;
 
     private Form _homeForm;
 
-    BindingList<Customer> _Customers = new();
-    BindingList<Appointment> appointments = new();
+    BindingList<Customer> _Customers;
+    BindingList<Appointment> _appointments;
 
-    public CalendarForm(Form homeForm)
+    public CalendarForm(
+        Form homeForm,
+        GregorianCalendar cal,
+        Customer[] customers,
+        Appointment[] appointments
+    )
     {
         InitializeComponent();
         LoadCustomers();
 
         _homeForm = homeForm;
+        _Customers = [.. customers];
+        _appointments = [.. appointments];
         customerListBox.DataSource = _Customers;
+        calendar = cal;
     }
 
     private void DatePicker_ValueChanged(object sender, EventArgs e)
     {
-        selectedDate = datePicker.Value.ToUniversalTime();
+        selectedDate = DateOnly.FromDateTime(datePicker.Value.ToUniversalTime());
 
-        // if (selectedDate is not null)
-        //     using (var context = new CompanyContext())
-        //     {
-        //         appointments = [.. context.Appointments.Where(apt => apt.Start == selectedDate)];
-        //     }
+        if (selectedDate is not null)
+            using (var context = new CompanyContext())
+            {
+                _appointments =
+                [
+                    .. context.Appointments.Where(apt =>
+                        DateOnly.FromDateTime(apt.Start.UtcDateTime) == selectedDate
+                    )
+                ];
+            }
 
-        appointmentListBox.DataSource = appointments;
+        appointmentListBox.DataSource = _appointments;
     }
-
-    // private void TimePicker_ValueChanged(object sender, EventArgs e)
-    // {
-    //    throw new NotImplementedException();
-    // }
 
     private void LoadCustomers()
     {
@@ -63,13 +71,30 @@ public partial class CalendarForm : Form
 
     private void AddAppointmentButton_Clicked(object sender, EventArgs e)
     {
-        var addAppointmentForm = new AppointmentCreate(this, new User(), new Customer());
+        var addAppointmentForm = new AppointmentCreateForm(
+            this,
+            new User(),
+            new Customer(),
+            [.. _appointments]
+        );
+
         addAppointmentForm.Show();
         Hide();
     }
 
     private void updateAppointmentButton_Clicked(object sender, EventArgs e)
     {
-        throw new NotImplementedException();
+        var selectedAppointment = (Appointment?)appointmentListBox.SelectedValue;
+
+        if (selectedAppointment is Appointment)
+        {
+            var updateAppointment = new AppointmentUpdateForm(
+                this,
+                selectedAppointment,
+                [.. _appointments]
+            );
+            updateAppointment.Show();
+            Hide();
+        }
     }
 }

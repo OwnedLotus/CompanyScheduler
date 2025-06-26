@@ -24,7 +24,7 @@ public class Appointment()
     public DateTimeOffset End { get; set; }
     public DateTimeOffset CreateDate { get; set; }
     public string? CreatedBy { get; set; }
-    public string LastUpdate { get; set; } = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
+    public string? LastUpdate { get; set; }
     public string? LastUpdateBy { get; set; }
 
     public static bool CheckTextBoxes(string[] input)

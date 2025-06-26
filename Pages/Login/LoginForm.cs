@@ -1,4 +1,6 @@
 using System.Globalization;
+using System.Linq;
+using CompanyScheduler.Data;
 using CompanyScheduler.Models;
 
 namespace CompanyScheduler.Pages.Login;
@@ -42,7 +44,37 @@ public partial class LoginForm : Form
 
     private void LoginButton_Clicked(object sender, EventArgs e)
     {
+#if !DEBUG
         // Check if user is registered
+        using (var context = new CompanyContext())
+        {
+            var users = context.Users.AsParallel();
+
+            foreach (var user in users)
+            {
+                if (userBox.Text == user.UserName && passBox.Text == user.Password)
+                {
+                    // Enter the application
+                    UpdateLoginLog(userBox.Text);
+                    var home = new HomeForm(new User());
+                    home.Show();
+                    Hide();
+                }
+                else
+                {
+                    switch (selection)
+                    {
+                        case 0:
+                            MessageBox.Show(messageFailedEn, captionFailedEn, MessageBoxButtons.OK);
+                            break;
+                        case 1:
+                            MessageBox.Show(messageFailedJp, captionFailedJp, MessageBoxButtons.OK);
+                            break;
+                    }
+                }
+            }
+        }
+#else
         if (userBox.Text == "test" && passBox.Text == "test")
         {
             // Enter the application
@@ -63,6 +95,7 @@ public partial class LoginForm : Form
                     break;
             }
         }
+#endif
     }
 
     public void LanguagesSelector_SelectionChanged(object sender, EventArgs e)

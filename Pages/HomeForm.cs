@@ -1,19 +1,17 @@
 ﻿using System.ComponentModel;
 using System.Linq;
-
 using CompanyScheduler.Data;
 using CompanyScheduler.Models;
 using CompanyScheduler.Pages.Customers;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace CompanyScheduler.Pages;
 
 /// <summary>
-/// Form handeling main activities
-/// 
+/// Form handling main activities
+///
 /// TODO:
-///     Add Exception Handeling add update delete
+///     Add Exception Handling add update delete
 ///     Add report functions
 /// </summary>
 
@@ -21,7 +19,7 @@ namespace CompanyScheduler.Pages;
 public partial class HomeForm : Form
 {
     private BindingList<Appointment>? appointments;
-    private Appointment? _selectedAppointment;
+    private Appointment? _selectedAppointment = null;
 
     public User User { get; private set; }
 
@@ -34,10 +32,8 @@ public partial class HomeForm : Form
 
     private void LoadAppointments()
     {
-        using (var context = new CompanyContext())
-        {
-            //appointments = [.. context.Appointments.Include(a => a.User)];
-        }
+        using var context = new CompanyContext();
+        appointments = [.. context.Appointments.Include(a => a.User)];
     }
 
     private void CreateCustomerButton_Clicked(object sender, EventArgs e)
@@ -48,7 +44,8 @@ public partial class HomeForm : Form
 
         using (var context = new CompanyContext())
         {
-            CreateCustomer.CustomerCreated += (sender, customer) => _selectedAppointment.Customer = customer;
+            CreateCustomer.CustomerCreated += (sender, customer) =>
+                _selectedAppointment.Customer = customer;
             context.Appointments.Add(_selectedAppointment);
             context.SaveChanges();
         }
@@ -67,7 +64,8 @@ public partial class HomeForm : Form
         using (var context = new CompanyContext())
         {
             context.Appointments.Remove(_selectedAppointment);
-            UpdateCustomer.CustomerUpdated += (sender, customer) => _selectedAppointment.Customer = customer;
+            UpdateCustomer.CustomerUpdated += (sender, customer) =>
+                _selectedAppointment.Customer = customer;
             context.Appointments.Add(_selectedAppointment);
             context.SaveChanges();
         }
@@ -90,19 +88,21 @@ public partial class HomeForm : Form
         }
     }
 
-    private void GenerateAppointmentTypesByMonth(int month)
-    {
+    private void AppointmentsButton_Clicked(object sender, EventArgs e) { }
 
+    private int GenerateAppointmentTypesByMonth(DateOnly date)
+    {
+        throw new NotImplementedException();
     }
 
     private void GenerateSchedule()
     {
-
+        throw new NotImplementedException();
     }
 
     private void GeneratePerCity(City city)
     {
-
+        throw new NotImplementedException();
     }
 
     private void QuitButton_Clicked(object sender, EventArgs e) => Environment.Exit(0);

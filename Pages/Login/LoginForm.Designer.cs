@@ -39,7 +39,7 @@ partial class LoginForm
         loginHeaderLabel = new()
         {
             AutoSize = true,
-            Location = new Point(1, 1),
+            Location = new Point(10, 10),
             Name = "loginHeaderLabel",
             TabIndex = 0,
             Text = "Login"
