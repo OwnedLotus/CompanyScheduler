@@ -23,9 +23,6 @@ public partial class HomeForm : Form
     private BindingList<Appointment>? appointments;
     private Appointment? _selectedAppointment;
 
-    private readonly DbContext? dbContext;
-
-
     private User _user;
 
     public HomeForm(User user)
@@ -39,13 +36,13 @@ public partial class HomeForm : Form
     {
         using (var context = new CompanyContext())
         {
-            appointments = [.. context.Appointments.Include(a => a.User)];
+            //appointments = [.. context.Appointments.Include(a => a.User)];
         }
     }
 
     private void CreateCustomerButton_Clicked(object sender, EventArgs e)
     {
-        if (_selectedAppointment is null || dbContext is null)
+        if (_selectedAppointment is null)
             return;
         var CreateCustomer = new CustomerCreateForm(_user, this);
 
