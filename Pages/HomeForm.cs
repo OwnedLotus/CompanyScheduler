@@ -90,7 +90,7 @@ public partial class HomeForm : Form
         }
     }
 
-    private void GenerateAppointmentTypesByMonth()
+    private void GenerateAppointmentTypesByMonth(int month)
     {
 
     }
