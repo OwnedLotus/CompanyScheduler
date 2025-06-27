@@ -1,4 +1,4 @@
-using CompanyScheduler.OldModels;
+using CompanyScheduler.Models;
 
 namespace CompanyScheduler.Pages.Calendar.Appointments;
 
@@ -113,11 +113,11 @@ public partial class AppointmentCreateForm : Form
             newAppointment.Location = location;
             newAppointment.Contact = contact;
             newAppointment.Type = type;
-            newAppointment.Url = new Uri(url);
+            newAppointment.Url = url;
             newAppointment.Start = new DateTime(selectedDate, selectedTime).ToUniversalTime();
             newAppointment.End = newAppointment.Start.AddMinutes((double)selectedDuration).ToUniversalTime();
-            newAppointment.CreateDate = DateTimeOffset.UtcNow;
-            newAppointment.LastUpdate = Appointment.UpdateFormat();
+            newAppointment.CreateDate = DateTime.UtcNow;
+            newAppointment.LastUpdate = DateTime.UtcNow;
             newAppointment.LastUpdateBy = _user.UserName;
 
 

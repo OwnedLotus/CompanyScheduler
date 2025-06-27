@@ -1,6 +1,5 @@
 using System.Text.RegularExpressions;
 using CompanyScheduler.Models;
-using CompanyScheduler.OldModels;
 
 namespace CompanyScheduler.Pages.Customers;
 
@@ -42,19 +41,19 @@ public partial class CustomerCreateForm : Form
         {
             var country = new Country()
             {
-                CountryName = customerCountryName,
-                CreateDate = DateTimeOffset.UtcNow,
+                Country1 = customerCountryName,
+                CreateDate = DateTime.UtcNow,
                 CreatedBy = User.UserName,
-                LastUpdate = Appointment.UpdateFormat(),
+                LastUpdate = DateTime.UtcNow,
                 LastUpdateBy = User.UserName
             };
             var city = new City()
             {
-                CityName = customerCityName,
+                City1 = customerCityName,
                 Country = country,
-                CreateDate = DateTimeOffset.UtcNow,
+                CreateDate = DateTime.UtcNow,
                 CreatedBy = User.UserName,
-                LastUpdate = Appointment.UpdateFormat(),
+                LastUpdate = DateTime.UtcNow,
                 LastUpdateBy = User.UserName
             };
             var address = new Address()
@@ -64,17 +63,16 @@ public partial class CustomerCreateForm : Form
                 City = city,
                 PostalCode = customerPostal,
                 Phone = customerPhone,
-                CreateDate = DateTimeOffset.UtcNow,
+                CreateDate = DateTime.UtcNow,
                 CreatedBy = User.UserName,
-                LastUpdate = Appointment.UpdateFormat(),
+                LastUpdate = DateTime.UtcNow,
                 LastUpdateBy = User.UserName,
             };
 
             Customer.CustomerName = customerName;
             Customer.Address = address;
-            Customer.Active = 0;
-            Customer.CreatedDate = DateTime.UtcNow;
-            Customer.LastUpdate = Appointment.UpdateFormat();
+            Customer.Active = true;
+            Customer.LastUpdate = DateTime.UtcNow;
             Customer.LastUpdateBy = User.UserName;
 
             CustomerCreated?.Invoke(this, Customer);

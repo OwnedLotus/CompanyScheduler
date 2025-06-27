@@ -1,4 +1,4 @@
-using CompanyScheduler.OldModels;
+using CompanyScheduler.Models;
 
 namespace CompanyScheduler.Pages.Calendar.Appointments;
 
@@ -31,8 +31,8 @@ public partial class AppointmentUpdateForm : Form
         typeTextBox.Text = appointment.Type;
         urlTextBox.Text = appointment.Url?.ToString();
 
-        datePicker.Value = appointment.Start.ToLocalTime().LocalDateTime;
-        timePicker.Value = appointment.Start.ToLocalTime().LocalDateTime;
+        datePicker.Value = appointment.Start.ToLocalTime();
+        timePicker.Value = appointment.Start.ToLocalTime();
         durationPicker.Value = appointment.End.Subtract(appointment.Start).Minutes;
 
         _customer = appointment.Customer;
@@ -122,11 +122,11 @@ public partial class AppointmentUpdateForm : Form
             _appointment.Location = location;
             _appointment.Contact = contact;
             _appointment.Type = type;
-            _appointment.Url = new Uri(url);
+            _appointment.Url = url;
             _appointment.Start = new DateTime(selectedDate, selectedTime).ToUniversalTime();
             _appointment.End = _appointment.Start.AddMinutes((double)selectedDuration).ToUniversalTime();
-            _appointment.CreateDate = DateTimeOffset.UtcNow;
-            _appointment.LastUpdate = Appointment.UpdateFormat();
+            _appointment.CreateDate = DateTime.UtcNow;
+            _appointment.LastUpdate = DateTime.UtcNow;
             _appointment.LastUpdateBy = _user?.UserName;
 
         }

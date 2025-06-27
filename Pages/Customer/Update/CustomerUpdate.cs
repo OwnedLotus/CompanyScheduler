@@ -1,5 +1,4 @@
 using CompanyScheduler.Models;
-using CompanyScheduler.OldModels;
 
 namespace CompanyScheduler.Pages.Customers;
 
@@ -23,9 +22,9 @@ public partial class CustomerUpdateForm : Form
         updateAddressPhoneTextBox.Text = customer.Address?.Phone;
         updateAddressPostalCodeTextBox.Text = customer.Address?.PostalCode;
 
-        updateCityNameTextBox.Text = customer.Address?.City?.CityName;
+        updateCityNameTextBox.Text = customer.Address?.City?.City1;
 
-        updateCountryNameTextBox.Text = customer.Address?.City?.Country?.CountryName;
+        updateCountryNameTextBox.Text = customer.Address?.City?.Country?.Country1;
     }
 
     private void UpdateCustomerAddButton_Click(object sender, EventArgs e)
@@ -52,19 +51,19 @@ public partial class CustomerUpdateForm : Form
         {
             var country = new Country()
             {
-                CountryName = customerCountryName,
-                CreateDate = DateTimeOffset.UtcNow,
+                Country1 = customerCountryName,
+                CreateDate = DateTime.UtcNow,
                 CreatedBy = User.UserName,
-                LastUpdate = Appointment.UpdateFormat(),
+                LastUpdate = DateTime.UtcNow,
                 LastUpdateBy = User.UserName
             };
             var city = new City()
             {
-                CityName = customerCityName,
+                City1 = customerCityName,
                 Country = country,
-                CreateDate = DateTimeOffset.UtcNow,
+                CreateDate = DateTime.UtcNow,
                 CreatedBy = User.UserName,
-                LastUpdate = Appointment.UpdateFormat(),
+                LastUpdate = DateTime.UtcNow,
                 LastUpdateBy = User.UserName
             };
             var address = new Address()
@@ -74,17 +73,16 @@ public partial class CustomerUpdateForm : Form
                 City = city,
                 PostalCode = customerPostal,
                 Phone = customerPhone,
-                CreateDate = DateTimeOffset.UtcNow,
+                CreateDate = DateTime.UtcNow,
                 CreatedBy = User.UserName,
-                LastUpdate = Appointment.UpdateFormat(),
+                LastUpdate = DateTime.UtcNow,
                 LastUpdateBy = User.UserName,
             };
 
             Customer.CustomerName = customerName;
             Customer.Address = address;
-            Customer.Active = 0;
-            Customer.CreatedDate = DateTime.UtcNow;
-            Customer.LastUpdate = Appointment.UpdateFormat();
+            Customer.Active = true;
+            Customer.LastUpdate = DateTime.UtcNow;
             Customer.LastUpdateBy = User.UserName;
 
             CustomerUpdated?.Invoke(this, Customer);

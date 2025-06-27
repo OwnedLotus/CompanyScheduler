@@ -1,8 +1,5 @@
-using System.Configuration;
 using System.Globalization;
-using System.Linq;
-using CompanyScheduler.Data;
-using CompanyScheduler.OldModels;
+using CompanyScheduler.Models;
 
 namespace CompanyScheduler.Pages.Login;
 
@@ -47,17 +44,18 @@ public partial class LoginForm : Form
     {
 #if true
         // Check if user is registered
-        using (var context = new CompanyContext())
+        using (var context = new ClientScheduleContext())
         {
             var users = context.Users.AsParallel();
 
             foreach (var user in users)
             {
-                if (userBox.Text == user.UserName && passBox.Text == user.Password)
+                if (userBox.Text == user.UserName && passBox.Text == user.Password && user is not null)
                 {
                     // Enter the application
                     UpdateLoginLog(userBox.Text);
-                    var home = new HomeForm(new User());
+
+                    var home = new HomeForm(user);
                     home.Show();
                     Hide();
                 }

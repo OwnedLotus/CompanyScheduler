@@ -38,4 +38,16 @@ public partial class Appointment
     public virtual Customer Customer { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
+    
+    public static bool CheckTextBoxes(string[] input)
+    {
+        foreach (string inputItem in input)
+        {
+            if (string.IsNullOrEmpty(inputItem))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 }

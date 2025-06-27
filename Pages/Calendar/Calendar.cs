@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.Globalization;
-using CompanyScheduler.Data;
-using CompanyScheduler.OldModels;
+using CompanyScheduler.Models;
 using CompanyScheduler.Pages.Calendar.Appointments;
 using Microsoft.EntityFrameworkCore;
 
@@ -46,12 +45,12 @@ public partial class CalendarForm : Form
         selectedDate = DateOnly.FromDateTime(datePicker.Value.ToUniversalTime());
 
         if (selectedDate is not null)
-            using (var context = new CompanyContext())
+            using (var context = new ClientScheduleContext())
             {
                 _appointments =
                 [
                     .. context.Appointments.Where(apt =>
-                        DateOnly.FromDateTime(apt.Start.UtcDateTime) == selectedDate
+                        DateOnly.FromDateTime(apt.Start.ToUniversalTime()) == selectedDate
                     )
                 ];
             }
@@ -61,10 +60,10 @@ public partial class CalendarForm : Form
 
     private void LoadCustomers()
     {
-        //using (var context = new CompanyContext())
-        //{
-        //    Customers = [..context.Customers];
-        //}
+        using (var context = new ClientScheduleContext())
+        {
+           _Customers = [..context.Customers];
+        }
     }
 
     private void QuitButton_Click(object sender, EventArgs e)
@@ -90,7 +89,7 @@ public partial class CalendarForm : Form
     {
         var selectedAppointment = (Appointment?)appointmentListBox.SelectedValue;
 
-        if (selectedAppointment is Appointment)
+        if (selectedAppointment is not null)
         {
             var updateAppointment = new AppointmentUpdateForm(
                 this,

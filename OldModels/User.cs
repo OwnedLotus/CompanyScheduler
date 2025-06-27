@@ -13,6 +13,6 @@ public class User
     public string? CreatedBy { get; set; }
 
     // MYSQL TIMESTAMP DATATYPE
-    public string ModifiedDate { get; set; } = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
+    public string ModifiedDate { get; set; } 
     public string? LastUpdatedBy { get; set; }
 }

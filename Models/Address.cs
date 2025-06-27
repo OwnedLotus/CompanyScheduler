@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace CompanyScheduler.Models;
 
@@ -28,4 +29,12 @@ public partial class Address
     public virtual City City { get; set; } = null!;
 
     public virtual ICollection<Customer> Customers { get; set; } = new List<Customer>();
+
+    public static bool OnlyDigitsAndDashes(string input)
+    {
+        return DigitsAndDashes().Match(input ?? string.Empty).Success;
+    }
+
+    [GeneratedRegex(@"^[0-9-]+$")]
+    private static partial Regex DigitsAndDashes();
 }

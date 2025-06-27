@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Linq;
-using CompanyScheduler.Data;
-using CompanyScheduler.OldModels;
+using CompanyScheduler.Models;
 using CompanyScheduler.Pages.Customers;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,7 +31,7 @@ public partial class HomeForm : Form
 
     private void LoadAppointments()
     {
-        using var context = new CompanyContext();
+        using var context = new ClientScheduleContext();
         appointments = [.. context.Appointments.Include(a => a.User)];
     }
 
@@ -42,7 +41,7 @@ public partial class HomeForm : Form
             return;
         var CreateCustomer = new CustomerCreateForm(User, this);
 
-        using (var context = new CompanyContext())
+        using (var context = new ClientScheduleContext())
         {
             CreateCustomer.CustomerCreated += (sender, customer) =>
                 _selectedAppointment.Customer = customer;
@@ -61,7 +60,7 @@ public partial class HomeForm : Form
 
         var UpdateCustomer = new CustomerUpdateForm(User, _selectedAppointment.Customer, this);
 
-        using (var context = new CompanyContext())
+        using (var context = new ClientScheduleContext())
         {
             context.Appointments.Remove(_selectedAppointment);
             UpdateCustomer.CustomerUpdated += (sender, customer) =>
@@ -79,13 +78,9 @@ public partial class HomeForm : Form
         if (_selectedAppointment is null || _selectedAppointment.User is null)
             return;
 
-        using (var context = new CompanyContext())
-        {
-            context.Appointments.Remove(_selectedAppointment);
-            _selectedAppointment.Customer = null;
-            context.Appointments.Add(_selectedAppointment);
-            context.SaveChanges();
-        }
+        using var context = new ClientScheduleContext();
+        context.Appointments.Remove(_selectedAppointment);
+        context.SaveChanges();
     }
 
     private void AppointmentsButton_Clicked(object sender, EventArgs e) { }
