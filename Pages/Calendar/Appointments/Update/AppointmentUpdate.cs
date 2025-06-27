@@ -1,4 +1,4 @@
-using CompanyScheduler.Models;
+using CompanyScheduler.OldModels;
 
 namespace CompanyScheduler.Pages.Calendar.Appointments;
 

@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Globalization;
 using CompanyScheduler.Data;
-using CompanyScheduler.Models;
+using CompanyScheduler.OldModels;
 using CompanyScheduler.Pages.Calendar.Appointments;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,11 +20,14 @@ public partial class CalendarForm : Form
     BindingList<Customer> _Customers;
     BindingList<Appointment> _appointments;
 
+    User _currentUser;
+
     public CalendarForm(
         Form homeForm,
         GregorianCalendar cal,
         Customer[] customers,
-        Appointment[] appointments
+        Appointment[] appointments,
+        User user
     )
     {
         InitializeComponent();
@@ -35,6 +38,7 @@ public partial class CalendarForm : Form
         _appointments = [.. appointments];
         customerListBox.DataSource = _Customers;
         calendar = cal;
+        _currentUser = user;
     }
 
     private void DatePicker_ValueChanged(object sender, EventArgs e)
@@ -91,7 +95,8 @@ public partial class CalendarForm : Form
             var updateAppointment = new AppointmentUpdateForm(
                 this,
                 selectedAppointment,
-                [.. _appointments]
+                [.. _appointments],
+                _currentUser
             );
             updateAppointment.Show();
             Hide();

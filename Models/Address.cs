@@ -1,31 +1,31 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.RegularExpressions;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CompanyScheduler.Models;
 
-public partial class Address()
+public partial class Address
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int AddressId { get; set; }
-    public string? Address1 { get; set; }
-    public string? Address2 { get; set; }
 
-    [ForeignKey("CityId")]
-    public City? City { get; set; }
-    public string? PostalCode { get; set; }
-    public string? Phone { get; set; }
-    public DateTimeOffset CreateDate { get; set; }
-    public string? CreatedBy { get; set; }
-    public string? LastUpdate { get; set; }
-    public string? LastUpdateBy { get; set; }
+    public string Address1 { get; set; } = null!;
 
-    public static bool OnlyDigitsAndDashes(string input)
-    {
-        return DigitsAndDashes().Match(input ?? string.Empty).Success;
-    }
+    public string Address2 { get; set; } = null!;
 
-    [GeneratedRegex(@"^[0-9-]+$")]
-    private static partial Regex DigitsAndDashes();
+    public int CityId { get; set; }
+
+    public string PostalCode { get; set; } = null!;
+
+    public string Phone { get; set; } = null!;
+
+    public DateTime CreateDate { get; set; }
+
+    public string CreatedBy { get; set; } = null!;
+
+    public DateTime LastUpdate { get; set; }
+
+    public string LastUpdateBy { get; set; } = null!;
+
+    public virtual City City { get; set; } = null!;
+
+    public virtual ICollection<Customer> Customers { get; set; } = new List<Customer>();
 }

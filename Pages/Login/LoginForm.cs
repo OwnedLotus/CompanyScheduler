@@ -1,7 +1,8 @@
+using System.Configuration;
 using System.Globalization;
 using System.Linq;
 using CompanyScheduler.Data;
-using CompanyScheduler.Models;
+using CompanyScheduler.OldModels;
 
 namespace CompanyScheduler.Pages.Login;
 
@@ -44,7 +45,7 @@ public partial class LoginForm : Form
 
     private void LoginButton_Clicked(object sender, EventArgs e)
     {
-#if !DEBUG
+#if true
         // Check if user is registered
         using (var context = new CompanyContext())
         {

@@ -1,46 +1,41 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CompanyScheduler.Models;
 
-public class Appointment()
+public partial class Appointment
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int AppointmentId { get; set; }
 
-    [ForeignKey("CustomerId")]
-    public Customer? Customer { get; set; }
+    public int CustomerId { get; set; }
 
-    [ForeignKey("UserID")]
-    public User? User { get; set; }
-    public string? Title { get; set; }
-    public string? Description { get; set; }
-    public string? Location { get; set; }
-    public string? Contact { get; set; }
-    public string? Type { get; set; }
-    public Uri? Url { get; set; }
-    public DateTimeOffset Start { get; set; }
-    public DateTimeOffset End { get; set; }
-    public DateTimeOffset CreateDate { get; set; }
-    public string? CreatedBy { get; set; }
-    public string? LastUpdate { get; set; }
-    public string? LastUpdateBy { get; set; }
+    public int UserId { get; set; }
 
-    public static bool CheckTextBoxes(string[] input)
-    {
-        foreach (string inputItem in input)
-        {
-            if (string.IsNullOrEmpty(inputItem))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
+    public string Title { get; set; } = null!;
 
-    public static string UpdateFormat()
-    {
-        return DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
-    }
+    public string Description { get; set; } = null!;
+
+    public string Location { get; set; } = null!;
+
+    public string Contact { get; set; } = null!;
+
+    public string Type { get; set; } = null!;
+
+    public string Url { get; set; } = null!;
+
+    public DateTime Start { get; set; }
+
+    public DateTime End { get; set; }
+
+    public DateTime CreateDate { get; set; }
+
+    public string CreatedBy { get; set; } = null!;
+
+    public DateTime LastUpdate { get; set; }
+
+    public string LastUpdateBy { get; set; } = null!;
+
+    public virtual Customer Customer { get; set; } = null!;
+
+    public virtual User User { get; set; } = null!;
 }

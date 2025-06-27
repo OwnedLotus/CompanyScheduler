@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Linq;
 using CompanyScheduler.Data;
-using CompanyScheduler.Models;
+using CompanyScheduler.OldModels;
 using CompanyScheduler.Pages.Customers;
 using Microsoft.EntityFrameworkCore;
 

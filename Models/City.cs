@@ -1,19 +1,25 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CompanyScheduler.Models;
 
-public class City()
+public partial class City
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int CityId { get; set; }
-    public string? CityName { get; set; }
 
-    [ForeignKey("CountryId")]
-    public Country? Country { get; set; }
-    public DateTimeOffset CreateDate { get; set; }
-    public string? CreatedBy { get; set; }
-    public string LastUpdate { get; set; } = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
-    public string? LastUpdateBy { get; set; }
+    public string City1 { get; set; } = null!;
+
+    public int CountryId { get; set; }
+
+    public DateTime CreateDate { get; set; }
+
+    public string CreatedBy { get; set; } = null!;
+
+    public DateTime LastUpdate { get; set; }
+
+    public string LastUpdateBy { get; set; } = null!;
+
+    public virtual ICollection<Address> Addresses { get; set; } = new List<Address>();
+
+    public virtual Country Country { get; set; } = null!;
 }

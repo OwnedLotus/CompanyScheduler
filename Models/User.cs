@@ -1,18 +1,25 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CompanyScheduler.Models;
 
-public class User
+public partial class User
 {
-    [Key]
-    public int userID { get; set; }
-    public string? UserName { get; set; }
-    public string? Password { get; set; }
-    public byte Active { get; set; }
-    public DateTimeOffset CreatedDate { get; set; } = DateTime.UtcNow;
-    public string? CreatedBy { get; set; }
+    public int UserId { get; set; }
 
-    // MYSQL TIMESTAMP DATATYPE
-    public string ModifiedDate { get; set; } = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
-    public string? LastUpdatedBy { get; set; }
+    public string UserName { get; set; } = null!;
+
+    public string Password { get; set; } = null!;
+
+    public sbyte Active { get; set; }
+
+    public DateTime CreateDate { get; set; }
+
+    public string CreatedBy { get; set; } = null!;
+
+    public DateTime LastUpdate { get; set; }
+
+    public string LastUpdateBy { get; set; } = null!;
+
+    public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
 }
