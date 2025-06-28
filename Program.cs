@@ -1,5 +1,3 @@
-using CompanyScheduler.Pages;
-using CompanyScheduler.Pages.Calendar;
 using CompanyScheduler.Pages.Login;
 
 namespace CompanyScheduler;
