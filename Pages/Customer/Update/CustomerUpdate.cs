@@ -5,7 +5,8 @@ namespace CompanyScheduler.Pages.Customers;
 public partial class CustomerUpdateForm : Form
 {
     public event EventHandler<Customer>? CustomerUpdated;
-    public Customer Customer { get; private set; }
+    private Customer _customer;
+    private Customer _updatedCustomer;
     public User User { get; private set; }
     private readonly Form _mainForm;
 
@@ -14,8 +15,10 @@ public partial class CustomerUpdateForm : Form
         InitializeComponent();
         User = user;
         _mainForm = mainForm;
-        Customer = customer;
+        _customer = customer;
+        _updatedCustomer = customer;
 
+        
         updateCustomerNameTextBox.Text = customer.CustomerName;
         updateAddress1TextBox.Text = customer.Address?.Address1;
         updateAddress2TextBox.Text = customer.Address?.Address2;
@@ -79,13 +82,14 @@ public partial class CustomerUpdateForm : Form
                 LastUpdateBy = User.UserName,
             };
 
-            Customer.CustomerName = customerName;
-            Customer.Address = address;
-            Customer.Active = true;
-            Customer.LastUpdate = DateTime.UtcNow;
-            Customer.LastUpdateBy = User.UserName;
+            _updatedCustomer.CustomerName = customerName;
+            _updatedCustomer.Address = address;
+            _updatedCustomer.Active = true;
+            _updatedCustomer.LastUpdate = DateTime.UtcNow;
+            _updatedCustomer.LastUpdateBy = User.UserName;
 
-            CustomerUpdated?.Invoke(this, Customer);
+
+
             _mainForm.Show();
             Close();
         }

@@ -1,4 +1,5 @@
-﻿namespace CompanyScheduler.Pages;
+﻿
+namespace CompanyScheduler.Pages;
 partial class HomeForm
 {
     /// <summary>
@@ -39,11 +40,12 @@ partial class HomeForm
             Location = new Point(50, 10),
             Text = "Available Customers"
         };
-        customerGrid = new()
+        customerDataGrid = new()
         {
-            Name = "customerGrid",
+            Name = "customerListBox",
             Location = new Point(50, 30),
         };
+        customerDataGrid.SelectionChanged += CustomerDataGrid_Changed;
 
         createCustomerButton = new()
         {
@@ -77,17 +79,17 @@ partial class HomeForm
             Location = new Point(400, 10),
             Text = "Customer Appointments"
         };
-        appointmentListView = new()
+        appointmentDataGrid = new()
         {
             Name = "appointmentListView",
             Location = new Point(400, 30)
         };
-        appointmentListView.SelectedIndexChanged += AppointmentListView_IndexChanged;
+        appointmentDataGrid.SelectionChanged += AppointmentDataGrid_IndexChanged;
 
         appointmentsButton = new()
         {
             Name = "appointmentsButton",
-            Location = new Point(400, 150),
+            Location = new Point(400, 200),
             AutoSize = true,
             Text = "Appointments"
         };
@@ -102,29 +104,30 @@ partial class HomeForm
         quitButton.Click += QuitButton_Clicked;
 
         Controls.Add(customerGridLabel);
-        Controls.Add(customerGrid);
+        Controls.Add(customerDataGrid);
         Controls.Add(createCustomerButton);
         Controls.Add(updateCustomerButton);
         Controls.Add(deleteCustomerButton);
 
         Controls.Add(appointmentListViewLabel);
-        Controls.Add(appointmentListView);
+        Controls.Add(appointmentDataGrid);
 
         Controls.Add(appointmentsButton);
 
         Controls.Add(quitButton);
     }
 
+
     #endregion
 
     Label customerGridLabel;
-    DataGridView customerGrid;
+    DataGridView customerDataGrid;
     Button createCustomerButton;
     Button updateCustomerButton;
     Button deleteCustomerButton;
 
     Label appointmentListViewLabel;
-    ListView appointmentListView;
+    DataGridView appointmentDataGrid;
 
     Button appointmentsButton;
 

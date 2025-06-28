@@ -49,18 +49,18 @@ partial class CalendarForm
 
         //datePicker.ValueChanged += TimePicker_ValueChanged;
 
-        customerListBox = new()
+        customerDataGrid = new()
         {
             Location = new Point(450, 50),
             Size = new Size(125, 200),
-            Name = "customerListBox"
+            Name = "customerDataGrid"
         };
 
-        appointmentListBox = new()
+        appointmentDataGrid = new()
         {
             Location = new Point(600, 50),
             Size = new Size(125, 200),
-            Name = "appointmentListBox"
+            Name = "appointmentDataGrid"
         };
 
         quitButton = new()
@@ -99,8 +99,8 @@ partial class CalendarForm
         Controls.Add(datePicker);
         //Controls.Add(timePicker);
 
-        Controls.Add(customerListBox);
-        Controls.Add(appointmentListBox);
+        Controls.Add(customerDataGrid);
+        Controls.Add(appointmentDataGrid);
         Controls.Add(quitButton);
         Controls.Add(addAppointmentButton);
         Controls.Add(updateAppointmentButton);
@@ -117,6 +117,6 @@ partial class CalendarForm
     Button deleteAppointmentButton;
     Button quitButton;
 
-    ListBox appointmentListBox;
-    ListBox customerListBox;
+    DataGridView appointmentDataGrid;
+    DataGridView customerDataGrid;
 }
