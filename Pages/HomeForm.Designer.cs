@@ -1,5 +1,4 @@
-﻿
-namespace CompanyScheduler.Pages;
+﻿namespace CompanyScheduler.Pages;
 partial class HomeForm
 {
     /// <summary>
@@ -83,6 +82,7 @@ partial class HomeForm
             Name = "appointmentListView",
             Location = new Point(400, 30)
         };
+        appointmentListView.SelectedIndexChanged += AppointmentListView_IndexChanged;
 
         appointmentsButton = new()
         {
@@ -115,10 +115,7 @@ partial class HomeForm
         Controls.Add(quitButton);
     }
 
-
-
     #endregion
-
 
     Label customerGridLabel;
     DataGridView customerGrid;
