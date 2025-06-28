@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using CompanyScheduler.Models;
 
 namespace CompanyScheduler.Pages.Customers;
@@ -34,7 +33,7 @@ public partial class CustomerCreateForm : Form
             customerAddress2,
             customerPostal,
             customerCityName,
-            customerCountryName
+            customerCountryName,
         ];
 
         if (Appointment.CheckTextBoxes(inputs) || Address.OnlyDigitsAndDashes(customerPhone))
@@ -45,7 +44,7 @@ public partial class CustomerCreateForm : Form
                 CreateDate = DateTime.UtcNow,
                 CreatedBy = User.UserName,
                 LastUpdate = DateTime.UtcNow,
-                LastUpdateBy = User.UserName
+                LastUpdateBy = User.UserName,
             };
             var city = new City()
             {
@@ -54,7 +53,7 @@ public partial class CustomerCreateForm : Form
                 CreateDate = DateTime.UtcNow,
                 CreatedBy = User.UserName,
                 LastUpdate = DateTime.UtcNow,
-                LastUpdateBy = User.UserName
+                LastUpdateBy = User.UserName,
             };
             var address = new Address()
             {
