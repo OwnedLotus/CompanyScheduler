@@ -20,8 +20,16 @@ partial class AppointmentUpdateForm
         AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(800, 450);
         this.Text = "Update Record";
-    
+
         #region Time Pickers
+
+        updateAppointmentLabel = new()
+        {
+            Name = "updateAppointmentLabel",
+            Location = new Point(10, 10),
+            AutoSize = true,
+            Text = "Update An Appointment"
+        };
 
         dateLabel = new()
         {
@@ -168,7 +176,7 @@ partial class AppointmentUpdateForm
         quitAppointmentButton.Click += QuitAppointmentButton_Clicked;
 
         #region Controls
-        Controls.Add(createAppointmentLabel);
+        Controls.Add(updateAppointmentLabel);
         Controls.Add(dateLabel);
         Controls.Add(datePicker);
         Controls.Add(timeLabel);
@@ -193,7 +201,7 @@ partial class AppointmentUpdateForm
     }
 
 
-    Label createAppointmentLabel;
+    Label updateAppointmentLabel;
     #region TimePickers
     Label dateLabel;
     DateTimePicker datePicker;

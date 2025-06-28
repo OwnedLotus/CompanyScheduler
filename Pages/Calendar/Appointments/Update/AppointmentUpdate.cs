@@ -6,35 +6,25 @@ public partial class AppointmentUpdateForm : Form
 {
     public EventHandler<Appointment>? AppointmentCreated;
     private Appointment _appointment;
-    private Appointment[] allAppointments;
     private readonly Form previousForm;
-    private Customer? _customer;
+    private readonly Customer? _customer;
     private User? _user;
 
-    private DateOnly selectedDate = new();
-    private TimeOnly selectedTime = new();
-    private TimeOnly selectedDuration = new();
-
-    public AppointmentUpdateForm(Form prevForm, Appointment appointment, Appointment[] appointments, User user)
+    public AppointmentUpdateForm(Form prevForm, Appointment appointment, User user)
     {
         InitializeComponent();
 
         previousForm = prevForm;
-        allAppointments = appointments;
-
         _appointment = appointment;
-
         titleTextBox.Text = appointment.Title;
         descriptionTextBox.Text = appointment.Description;
         locationTextBox.Text = appointment.Location;
         contactTextBox.Text = appointment.Contact;
         typeTextBox.Text = appointment.Type;
         urlTextBox.Text = appointment.Url?.ToString();
-
         datePicker.Value = appointment.Start.ToLocalTime();
         timePicker.Value = appointment.Start.ToLocalTime();
         durationPicker.Value = appointment.End.Subtract(appointment.Start).Minutes;
-
         _customer = appointment.Customer;
         _user = user;
     }
@@ -70,6 +60,7 @@ public partial class AppointmentUpdateForm : Form
 
     /// <summary>
     /// Validates whether the appointment conflicts with other appointments
+    /// According to EST Mon->Fri 9am->5pm
     /// </summary>
     /// <param name="date">Date of appointment</param>
     /// <param name="time">Start time of appointment</param>
@@ -77,20 +68,36 @@ public partial class AppointmentUpdateForm : Form
     /// <returns></returns>
     private bool ValidateScheduleConflict(DateOnly date, TimeOnly time, decimal duration)
     {
+        TimeZoneInfo est = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+
         // all appointments are in utc
-        var start = new DateTimeOffset(date, time, TimeSpan.Zero).ToUniversalTime();
-        var end = new DateTimeOffset(date,time, TimeSpan.FromMinutes((double)duration)).ToUniversalTime();
+        var start = new DateTime(date, time).ToUniversalTime();
+        start = TimeZoneInfo.ConvertTimeFromUtc(start, est);
+        var end = start.AddMinutes((double)duration);
+        end = TimeZoneInfo.ConvertTimeFromUtc(end, est);
+
+        List<Appointment> allAppointments = [];
+
+        using (var context = new ClientScheduleContext())
+        {
+            allAppointments = [.. context.Appointments];
+        }
 
         foreach (var appointment in allAppointments)
         {
+            var appointmentStart = TimeZoneInfo.ConvertTimeFromUtc(appointment.Start, est);
+            var appointmentEnd = TimeZoneInfo.ConvertTimeFromUtc(appointment.End, est);
+
             // if is the same customer and the schedules conflict
-            if ( appointment.Customer == _customer 
-                && 
-                ((appointment.Start <= start && start <= appointment.End)
-                || (appointment.Start <= end && end <= appointment.End)
-                || (appointment.Start <= start && end <= appointment.End)
-                || (start <= appointment.Start &&  appointment.End <= end))
+            if (
+                appointment.Customer == _customer
+                && (
+                    (appointmentStart <= start && start <= appointmentEnd)
+                    || (appointmentStart <= end && end <= appointmentEnd)
+                    || (appointmentStart <= start && end <= appointmentEnd)
+                    || (start <= appointmentStart && appointmentEnd <= end)
                 )
+            )
                 return false;
         }
         return true;
@@ -116,7 +123,8 @@ public partial class AppointmentUpdateForm : Form
             || ValidateTime(selectedTime)
             || ValidateDate(selectedDate)
             || ValidateScheduleConflict(selectedDate, selectedTime, selectedDuration)
-        ) {
+        )
+        {
             _appointment.Title = title;
             _appointment.Description = description;
             _appointment.Location = location;
@@ -124,11 +132,19 @@ public partial class AppointmentUpdateForm : Form
             _appointment.Type = type;
             _appointment.Url = url;
             _appointment.Start = new DateTime(selectedDate, selectedTime).ToUniversalTime();
-            _appointment.End = _appointment.Start.AddMinutes((double)selectedDuration).ToUniversalTime();
+            _appointment.End = _appointment
+                .Start.AddMinutes((double)selectedDuration)
+                .ToUniversalTime();
             _appointment.CreateDate = DateTime.UtcNow;
             _appointment.LastUpdate = DateTime.UtcNow;
-            _appointment.LastUpdateBy = _user?.UserName;
-
+            _appointment.LastUpdateBy = _user?.UserName!;
+        }
+        else
+        {
+            string message = "Failed to Parse Appointment";
+            string caption = "Input Value Error";
+            MessageBoxButtons buttons = MessageBoxButtons.OK;
+            MessageBox.Show(message, caption, buttons);
         }
     }
 
