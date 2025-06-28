@@ -84,7 +84,15 @@ partial class CalendarForm
             Text = "Update Appointment",
             Location = new Point(325, 350),
         };
-        updateAppointmentButton.Click += updateAppointmentButton_Clicked;
+        updateAppointmentButton.Click += UpdateAppointmentButton_Clicked;
+
+        deleteAppointmentButton = new()
+        {
+            Name = "deleteAppointmentButton",
+            Text = "Delete Appointment",
+            Location = new Point(175, 350)
+        };
+        deleteAppointmentButton.Click += DeleteAppointmentButton_Clicked;
 
         Controls.Add(titleLabel);
 
@@ -96,9 +104,8 @@ partial class CalendarForm
         Controls.Add(quitButton);
         Controls.Add(addAppointmentButton);
         Controls.Add(updateAppointmentButton);
+        Controls.Add(deleteAppointmentButton);
     }
-
-
 
     Label titleLabel;
 
@@ -107,6 +114,7 @@ partial class CalendarForm
 
     Button addAppointmentButton;
     Button updateAppointmentButton;
+    Button deleteAppointmentButton;
     Button quitButton;
 
     ListBox appointmentListBox;
