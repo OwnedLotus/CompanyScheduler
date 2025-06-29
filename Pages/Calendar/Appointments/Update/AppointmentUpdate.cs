@@ -4,8 +4,7 @@ namespace CompanyScheduler.Pages.Calendar.Appointments;
 
 public partial class AppointmentUpdateForm : Form
 {
-    public EventHandler<Appointment>? AppointmentUpdated;
-    private Appointment _newAppointment;
+    public EventHandler<(Appointment, Appointment)>? AppointmentUpdated;
     private Appointment _appointment;
     private Appointment updatedAppointment;
     private readonly Form previousForm;
@@ -17,7 +16,6 @@ public partial class AppointmentUpdateForm : Form
         InitializeComponent();
 
         previousForm = prevForm;
-        _newAppointment = appointment;
         _appointment = appointment;
         updatedAppointment = appointment;
         titleTextBox.Text = appointment.Title;
@@ -129,28 +127,31 @@ public partial class AppointmentUpdateForm : Form
             || ValidateScheduleConflict(selectedDate, selectedTime, selectedDuration)
         )
         {
-            _newAppointment.Title = title;
-            _newAppointment.Description = description;
-            _newAppointment.Location = location;
-            _newAppointment.Contact = contact;
-            _newAppointment.Type = type;
-            _newAppointment.Url = url;
-            _newAppointment.Start = new DateTime(selectedDate, selectedTime).ToUniversalTime();
-            _newAppointment.End = _newAppointment
-                .Start.AddMinutes((double)selectedDuration)
-                .ToUniversalTime();
-            _newAppointment.CreateDate = DateTime.UtcNow;
-            _newAppointment.LastUpdate = DateTime.UtcNow;
-            _newAppointment.LastUpdateBy = _user?.UserName!;
-
             using (var context = new ClientScheduleContext())
             {
-                context.Appointments.Remove(_appointment);
-                context.Appointments.Add(_newAppointment);
+                var _newAppointment = context.Appointments.FirstOrDefault(app => app.AppointmentId == _appointment.AppointmentId);
+
+                _newAppointment.Title = title;
+                _newAppointment.Description = description;
+                _newAppointment.Location = location;
+                _newAppointment.Contact = contact;
+                _newAppointment.Type = type;
+                _newAppointment.Url = url;
+                _newAppointment.Start = new DateTime(selectedDate, selectedTime).ToUniversalTime();
+                _newAppointment.End = _newAppointment
+                    .Start.AddMinutes((double)selectedDuration)
+                    .ToUniversalTime();
+                _newAppointment.LastUpdate = DateTime.UtcNow;
+                _newAppointment.LastUpdateBy = _user?.UserName!;
+
+           
+                _newAppointment.Customer = context.Customers.Find(_customer.CustomerId);
+
                 context.SaveChanges();
+                AppointmentUpdated?.Invoke(this, (_appointment, _newAppointment));
+
             }
 
-            AppointmentUpdated?.Invoke(this, _newAppointment);
             previousForm.Show();
             Close();
         }

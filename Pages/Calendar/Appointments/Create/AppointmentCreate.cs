@@ -127,9 +127,13 @@ public partial class AppointmentCreateForm : Form
             newAppointment.CreateDate = DateTime.UtcNow;
             newAppointment.LastUpdate = DateTime.UtcNow;
             newAppointment.LastUpdateBy = _user.UserName;
+            newAppointment.CreatedBy = _user.UserName;
 
             using (var context = new ClientScheduleContext())
             {
+                newAppointment.User = context.Users.Find(_user.UserId)!;
+                newAppointment.Customer = context.Customers.Find(_user.UserId)!;
+
                 context.Appointments.Add(newAppointment);
                 context.SaveChanges();
             }
