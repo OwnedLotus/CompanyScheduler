@@ -88,8 +88,14 @@ public partial class CustomerUpdateForm : Form
             _updatedCustomer.LastUpdate = DateTime.UtcNow;
             _updatedCustomer.LastUpdateBy = User.UserName;
 
+            using (var context = new ClientScheduleContext())
+            {
+                context.Customers.Remove(_customer);
+                context.Customers.Add(_updatedCustomer);
+                context.SaveChanges();
+            }
 
-
+            CustomerUpdated?.Invoke(this, _updatedCustomer);
             _mainForm.Show();
             Close();
         }
