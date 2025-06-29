@@ -3,6 +3,7 @@ using System.Globalization;
 using CompanyScheduler.Models;
 using CompanyScheduler.Pages.Calendar;
 using CompanyScheduler.Pages.Customers;
+using CompanyScheduler.Pages.Reports;
 using Microsoft.EntityFrameworkCore;
 
 namespace CompanyScheduler.Pages;
@@ -164,17 +165,26 @@ public partial class HomeForm : Form
         Hide();
     }
 
+    private void GenReportOneLabel_Click(object sender, EventArgs e) =>
+        new ReportForm(this, "Generate Appointments For this Month", [.. GenerateAppointmentTypesByMonth()]).Show();
+
     // Report generating functions
-    private IQueryable<string>? GenerateAppointmentTypesByMonth(DateOnly date) =>
+    private IQueryable<string>? GenerateAppointmentTypesByMonth() =>
         new ClientScheduleContext()
-            .Appointments.Where(appointment => appointment.Start.Month == date.Month)
-            .Select(appointment => appointment.Type)
+            .Appointments.GroupBy(appointment => appointment.Start.Month)
+            .Select(x => x.First().Type)
             .Distinct();
 
-    private IQueryable<List<Appointment>>? GenerateSchedule() =>
+    private void GenReportTwoLabel_Click(object sender, EventArgs e) =>
+        new ReportForm(this, "Schedule By Customer", [.. GenerateSchedule()?.SelectMany(list => list)]).Show();
+
+    private IQueryable<List<string>>? GenerateSchedule() =>
         new ClientScheduleContext()
             .Appointments.GroupBy(appointment => appointment.User)
-            .Select(appointments => appointments.ToList());
+            .Select(appointments => appointments.Select(x => $"Customer: {x.Customer.CustomerName} has appointment {x.Title}").ToList());
+
+    private void GenReportThreeLabel_Click(object sender, EventArgs e) => 
+        new ReportForm(this, "All Customers With Appointments", [.. GenerateAllCustomerWithAppointments()?.Select(x => x.ToString())]).Show();
 
     private IQueryable<bool>? GenerateAllCustomerWithAppointments() =>
         new ClientScheduleContext()

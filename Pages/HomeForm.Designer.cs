@@ -1,5 +1,4 @@
-﻿
-namespace CompanyScheduler.Pages;
+﻿namespace CompanyScheduler.Pages;
 partial class HomeForm
 {
     /// <summary>
@@ -20,18 +19,12 @@ partial class HomeForm
         base.Dispose(disposing);
     }
 
-    #region Windows Form Designer generated code
-
-    /// <summary>
-    /// Required method for Designer support - do not modify
-    /// the contents of this method with the code editor.
-    /// </summary>
     private void InitializeComponent()
     {
         this.components = new System.ComponentModel.Container();
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
         this.ClientSize = new System.Drawing.Size(800, 450);
-        this.Text = "HomePage";
+        this.Text = "Home";
 
         customerGridLabel = new()
         {
@@ -95,6 +88,33 @@ partial class HomeForm
         };
         appointmentsButton.Click += AppointmentsButton_Clicked;
 
+        genReportOneLabel = new()
+        {
+            Name = "genReportOneLabel",
+            Location = new Point(10, 360),
+            AutoSize = true,
+            Text = "Click to Generate Appointment Types By Month"
+        };
+        genReportOneLabel.Click += GenReportOneLabel_Click;
+
+        genReportTwoLabel = new()
+        {
+            Name = "getReportTwoLabel",
+            Location = new Point(10, 380),
+            AutoSize = true,
+            Text = "Click to Generate Schedule for Each User"
+        };
+        genReportTwoLabel.Click += GenReportTwoLabel_Click;
+
+        genReportThreeLabel = new()
+        {
+            Name = "genReportThreeLabel",
+            Location = new Point(10, 400),
+            AutoSize = true,
+            Text = "Click to Generate All Customers With Appointments"
+        };
+        genReportThreeLabel.Click += GenReportThreeLabel_Click;
+
         quitButton = new()
         {
             Name = "quitButton",
@@ -114,11 +134,15 @@ partial class HomeForm
 
         Controls.Add(appointmentsButton);
 
+
+        Controls.Add(genReportOneLabel);
+        Controls.Add(genReportTwoLabel);
+        Controls.Add(genReportThreeLabel);
+
         Controls.Add(quitButton);
     }
 
 
-    #endregion
 
     Label customerGridLabel;
     DataGridView customerDataGrid;
@@ -130,6 +154,10 @@ partial class HomeForm
     DataGridView appointmentDataGrid;
 
     Button appointmentsButton;
+
+    Label genReportOneLabel;
+    Label genReportTwoLabel;
+    Label genReportThreeLabel;
 
     Button quitButton;
 }
