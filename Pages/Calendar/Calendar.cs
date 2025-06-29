@@ -15,11 +15,13 @@ public partial class CalendarForm : Form
 
     private Form _homeForm;
 
-    BindingList<Customer>? _Customers;
+    BindingList<Customer>? _customers;
     BindingList<Appointment>? _appointments;
 
     User _currentUser;
     Customer _selectedCustomer = new();
+    Appointment _selectedAppointment = new();
+
     // todo enable selection of customer
 
     public CalendarForm(Form homeForm, GregorianCalendar cal, User user)
@@ -28,7 +30,7 @@ public partial class CalendarForm : Form
         LoadData();
 
         _homeForm = homeForm;
-        customerListBox.DataSource = _Customers;
+        customerListBox.DataSource = _customers;
         calendar = cal;
         _currentUser = user;
     }
@@ -44,7 +46,7 @@ public partial class CalendarForm : Form
                 [
                     .. context.Appointments.Where(apt =>
                         DateOnly.FromDateTime(apt.Start.ToUniversalTime()) == selectedDate
-                    )
+                    ),
                 ];
             }
 
@@ -54,7 +56,7 @@ public partial class CalendarForm : Form
     private void LoadData()
     {
         using var context = new ClientScheduleContext();
-        _Customers = [.. context.Customers];
+        _customers = [.. context.Customers];
         _appointments = [.. context.Appointments];
     }
 
@@ -68,21 +70,24 @@ public partial class CalendarForm : Form
     {
         var addAppointmentForm = new AppointmentCreateForm(this, _currentUser, _selectedCustomer);
 
+        addAppointmentForm.AppointmentCreated += (sender, appointment) =>
+            _appointments?.Add(appointment);
+
         addAppointmentForm.Show();
         Hide();
     }
 
     private void UpdateAppointmentButton_Clicked(object sender, EventArgs e)
     {
-        var selectedAppointment = (Appointment?)appointmentListBox.SelectedValue;
-
-        if (selectedAppointment is not null)
+        if (_selectedAppointment is not null)
         {
             var updateAppointment = new AppointmentUpdateForm(
                 this,
-                selectedAppointment,
+                _selectedAppointment,
                 _currentUser
             );
+            updateAppointment.AppointmentUpdated += (sender, appointment) =>
+                _appointments?.Add(appointment);
             updateAppointment.Show();
             Hide();
         }
@@ -90,10 +95,9 @@ public partial class CalendarForm : Form
 
     private void DeleteAppointmentButton_Clicked(object sender, EventArgs e)
     {
-        using var context = new ClientScheduleContext();
-
         var selectedAppointment = (Appointment?)appointmentListBox.SelectedValue;
 
+        using var context = new ClientScheduleContext();
         if (selectedAppointment is not null && context.Appointments.Contains(selectedAppointment))
         {
             context.Appointments.Remove(selectedAppointment);

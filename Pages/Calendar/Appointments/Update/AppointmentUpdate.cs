@@ -4,7 +4,8 @@ namespace CompanyScheduler.Pages.Calendar.Appointments;
 
 public partial class AppointmentUpdateForm : Form
 {
-    public EventHandler<Appointment>? AppointmentCreated;
+    public EventHandler<Appointment>? AppointmentUpdated;
+    private Appointment _newAppointment;
     private Appointment _appointment;
     private readonly Form previousForm;
     private readonly Customer? _customer;
@@ -15,6 +16,7 @@ public partial class AppointmentUpdateForm : Form
         InitializeComponent();
 
         previousForm = prevForm;
+        _newAppointment = appointment;
         _appointment = appointment;
         titleTextBox.Text = appointment.Title;
         descriptionTextBox.Text = appointment.Description;
@@ -125,19 +127,30 @@ public partial class AppointmentUpdateForm : Form
             || ValidateScheduleConflict(selectedDate, selectedTime, selectedDuration)
         )
         {
-            _appointment.Title = title;
-            _appointment.Description = description;
-            _appointment.Location = location;
-            _appointment.Contact = contact;
-            _appointment.Type = type;
-            _appointment.Url = url;
-            _appointment.Start = new DateTime(selectedDate, selectedTime).ToUniversalTime();
-            _appointment.End = _appointment
+            _newAppointment.Title = title;
+            _newAppointment.Description = description;
+            _newAppointment.Location = location;
+            _newAppointment.Contact = contact;
+            _newAppointment.Type = type;
+            _newAppointment.Url = url;
+            _newAppointment.Start = new DateTime(selectedDate, selectedTime).ToUniversalTime();
+            _newAppointment.End = _newAppointment
                 .Start.AddMinutes((double)selectedDuration)
                 .ToUniversalTime();
-            _appointment.CreateDate = DateTime.UtcNow;
-            _appointment.LastUpdate = DateTime.UtcNow;
-            _appointment.LastUpdateBy = _user?.UserName!;
+            _newAppointment.CreateDate = DateTime.UtcNow;
+            _newAppointment.LastUpdate = DateTime.UtcNow;
+            _newAppointment.LastUpdateBy = _user?.UserName!;
+
+            using (var context = new ClientScheduleContext())
+            {
+                context.Appointments.Remove(_appointment);
+                context.Appointments.Add(_newAppointment);
+                context.SaveChanges();
+            }
+
+            AppointmentUpdated?.Invoke(this, _newAppointment);
+            previousForm.Show();
+            Close();
         }
         else
         {

@@ -128,7 +128,15 @@ public partial class AppointmentCreateForm : Form
             newAppointment.LastUpdate = DateTime.UtcNow;
             newAppointment.LastUpdateBy = _user.UserName;
 
+            using (var context = new ClientScheduleContext())
+            {
+                context.Appointments.Add(newAppointment);
+                context.SaveChanges();
+            }
+
             AppointmentCreated?.Invoke(this, newAppointment);
+            previousForm.Show();
+            Close();
         }
         else
         {
