@@ -19,14 +19,14 @@ public partial class HomeForm : Form
     private Appointment? _selectedAppointment;
     private Customer? _selectedCustomer;
 
-    public User User { get; private set; }
+    private User? _user;
 
     public HomeForm(User user)
     {
         InitializeComponent();
         LoadData();
         CheckSoonAppointments(15);
-        User = user;
+        _user = user;
 
         customerDataGrid.DataSource = customers;
         appointmentDataGrid.DataSource = appointments;
@@ -53,11 +53,11 @@ public partial class HomeForm : Form
 
         foreach (var appointment in context.Appointments)
         {
-            var minutesLeft = Math.Abs((appointment.Start - currentTime).TotalMinutes);
+            var minutesLeft = (int)(appointment.Start - currentTime).TotalMinutes;
 
-            if (minutesLeft <= span)
+            if (minutesLeft <= span && minutesLeft >= 0)
             {
-                string message = $"Appointment {appointment.Title} starts in {minutesLeft}";
+                string message = $"Appointment {appointment.Title} starts in {(int)minutesLeft}";
                 string caption = $"Appointment Soon!";
                 MessageBoxButtons buttons = MessageBoxButtons.OK;
                 MessageBox.Show(message, caption, buttons);
@@ -106,20 +106,9 @@ public partial class HomeForm : Form
         }
     }
 
-    private void CalendarButton_Clicked(object sender, EventArgs e)
-    {
-        if (_selectedAppointment is null)
-            return;
-
-        var CalendarForm = new CalendarForm(this, calendar, User);
-
-        CalendarForm.Show();
-        Hide();
-    }
-
     private void CreateCustomerButton_Clicked(object sender, EventArgs e)
     {
-        var CreateCustomer = new CustomerCreateForm(User, this);
+        var CreateCustomer = new CustomerCreateForm(_user, this);
 
         CreateCustomer.CustomerCreated += (sender, customer) =>
         {
@@ -135,7 +124,7 @@ public partial class HomeForm : Form
         if (_selectedCustomer is null)
             return;
 
-        var UpdateCustomer = new CustomerUpdateForm(User, _selectedCustomer, this);
+        var UpdateCustomer = new CustomerUpdateForm(_user, _selectedCustomer, this);
         UpdateCustomer.CustomerUpdated += (sender, customer) =>
         {
             customers.Add(customer);
@@ -164,7 +153,7 @@ public partial class HomeForm : Form
 
     private void AppointmentsButton_Clicked(object sender, EventArgs e)
     {
-        var calForm = new CalendarForm(this, calendar, User);
+        var calForm = new CalendarForm(this, calendar, _user);
         calForm.Show();
 
         calForm.ScheduleUpdated += (sender, cal) =>
