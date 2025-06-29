@@ -36,7 +36,7 @@ public partial class CustomerCreateForm : Form
             customerCountryName,
         ];
 
-        if (Appointment.CheckTextBoxes(inputs) || Address.OnlyDigitsAndDashes(customerPhone))
+        if (Appointment.CheckTextBoxes(inputs) && Address.OnlyDigitsAndDashes(customerPhone))
         {
             var country = new Country()
             {
