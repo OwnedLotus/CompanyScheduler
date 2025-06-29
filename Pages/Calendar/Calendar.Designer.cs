@@ -39,29 +39,21 @@ partial class CalendarForm
 
         datePicker.ValueChanged += DatePicker_ValueChanged;
 
-        //timePicker = new()
-        //{
-        //    Location = new Point(20, 80),
-        //    Format = DateTimePickerFormat.Time,
-        //    CustomFormat = "HH:mm",
-        //    Name = "timePicker"
-        //};
-
-        //datePicker.ValueChanged += TimePicker_ValueChanged;
-
         customerDataGrid = new()
         {
-            Location = new Point(450, 50),
-            Size = new Size(125, 200),
+            Location = new Point(50, 80),
+            Size = new Size(300, 200),
             Name = "customerDataGrid"
         };
+        customerDataGrid.SelectionChanged += CustomerDataGrid_SelectionChanged;
 
         appointmentDataGrid = new()
         {
-            Location = new Point(600, 50),
-            Size = new Size(125, 200),
+            Location = new Point(400, 80),
+            Size = new Size(300, 200),
             Name = "appointmentDataGrid"
         };
+        appointmentDataGrid.SelectionChanged += AppointmentDataGrid_SelectionChanged;
 
         quitButton = new()
         {
@@ -106,6 +98,7 @@ partial class CalendarForm
         Controls.Add(updateAppointmentButton);
         Controls.Add(deleteAppointmentButton);
     }
+
 
     Label titleLabel;
 

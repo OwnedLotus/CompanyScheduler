@@ -35,6 +35,7 @@ public partial class CalendarForm : Form
 
         _homeForm = homeForm;
         customerDataGrid.DataSource = _customers;
+        appointmentDataGrid.DataSource = _appointments;
         calendar = cal;
         _currentUser = user;
     }
@@ -72,6 +73,36 @@ public partial class CalendarForm : Form
         }
     }
 
+    private void AppointmentDataGrid_SelectionChanged(object sender, EventArgs e)
+    {
+        Int32 selectedCellCount = appointmentDataGrid.GetCellCount(DataGridViewElementStates.Selected);
+
+        if(selectedCellCount > 0)
+        {
+            if (appointmentDataGrid.AreAllCellsSelected(true))
+            {
+                MessageBox.Show("Too many cells selected!", "Selected Cells", MessageBoxButtons.OK);
+            }
+            else
+            {
+                var selectedRow = appointmentDataGrid.SelectedRows;
+
+                if (selectedRow.Count > 0)
+                {
+                    _selectedAppointment = (selectedRow[0].DataBoundItem as Appointment)!;
+                }
+            }
+        }
+    }
+
+    private void CustomerDataGrid_SelectionChanged(object sender, EventArgs e)
+    {
+        if(customerDataGrid.CurrentRow is not null)
+        {
+            _selectedCustomer = (customerDataGrid.CurrentRow.DataBoundItem as Customer)!;
+        }
+    }
+
     private void QuitButton_Click(object sender, EventArgs e)
     {
         ScheduleUpdated?.Invoke(this, EventArgs.Empty);
@@ -92,15 +123,20 @@ public partial class CalendarForm : Form
 
     private void UpdateAppointmentButton_Clicked(object sender, EventArgs e)
     {
-        if (_selectedAppointment is not null)
+        if (_selectedAppointment is not null && _selectedCustomer is not null)
         {
             var updateAppointment = new AppointmentUpdateForm(
                 this,
                 _selectedAppointment,
                 _currentUser
             );
-            updateAppointment.AppointmentUpdated += (sender, appointment) =>
-                _appointments?.Add(appointment);
+            updateAppointment.AppointmentUpdated += (sender, appointments) =>
+            {
+                var (old, app) = appointments;
+
+                _appointments?.Remove(old);
+                _appointments?.Add(app);
+            };
             updateAppointment.Show();
             Hide();
         }
@@ -110,10 +146,10 @@ public partial class CalendarForm : Form
     {
         using var context = new ClientScheduleContext();
 
-        if (selectedAppointment is not null && context.Appointments.Contains(selectedAppointment))
+        if (_selectedAppointment is not null && context.Appointments.Contains(_selectedAppointment))
         {
-            context.Appointments.Remove(selectedAppointment);
-            _appointments.Remove(selectedAppointment);
+            context.Appointments.Remove(_selectedAppointment);
+            _appointments.Remove(_selectedAppointment);
             context.SaveChanges();
         }
         else
