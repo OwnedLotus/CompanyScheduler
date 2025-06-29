@@ -67,7 +67,7 @@ partial class AppointmentUpdateForm
             Name = "durationLabel",
             Location = new Point(50, 140),
             AutoSize = true,
-            Text = "Duration"
+            Text = "Duration (Minutes)"
         };
         durationPicker = new()
         {

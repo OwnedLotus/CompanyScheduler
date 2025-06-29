@@ -1,4 +1,5 @@
 using CompanyScheduler.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CompanyScheduler.Pages.Calendar.Appointments;
 
@@ -50,7 +51,6 @@ public partial class AppointmentCreateForm : Form
 
     /// <summary>
     /// Validates whether the appointment conflicts with other appointments
-    /// According to EST Mon->Fri 9am->5pm
     /// </summary>
     /// <param name="date">Date of appointment</param>
     /// <param name="time">Start time of appointment</param>
@@ -58,36 +58,40 @@ public partial class AppointmentCreateForm : Form
     /// <returns></returns>
     private bool ValidateScheduleConflict(DateOnly date, TimeOnly time, decimal duration)
     {
-        TimeZoneInfo est = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
-
-        var start = new DateTime(date, time).ToUniversalTime();
-        start = TimeZoneInfo.ConvertTimeFromUtc(start, est);
-        var end = start.AddMinutes((double)duration);
-        end = TimeZoneInfo.ConvertTimeFromUtc(end, est);
+        DateTime start = new DateTime(date, time);
+        DateTime end = start.AddMinutes((double)duration);               
 
         List<Appointment> allAppointments = [];
 
+        Customer? customer;
+
         using (var context = new ClientScheduleContext())
         {
-            allAppointments = [.. context.Appointments];
-        }
+            var appointments = context.Appointments.Include(a => a.Customer);
 
-        foreach (var appointment in allAppointments)
-        {
-            var appointmentStart = TimeZoneInfo.ConvertTimeFromUtc(appointment.Start, est);
-            var appointmentEnd = TimeZoneInfo.ConvertTimeFromUtc(appointment.End, est);
+            customer = context.Customers.Find(_customer.CustomerId);
 
-            // if is the same customer and the schedules conflict
-            if (
-                appointment.Customer == _customer
-                && (
-                    (appointmentStart <= start && start <= appointmentEnd)
-                    || (appointmentStart <= end && end <= appointmentEnd)
-                    || (appointmentStart <= start && end <= appointmentEnd)
-                    || (start <= appointmentStart && appointmentEnd <= end)
+
+            foreach (var appointment in appointments)
+            {
+                if (appointment.CustomerId!= _customer.CustomerId) continue;
+
+                var intersect1 = appointment.Start <= start && appointment.End <= end;
+                var intersect2 = start <= appointment.Start && end <= appointment.End;
+                var intersect3 = start <= appointment.Start && appointment.End <= end;
+                var intersect4 = appointment.Start <= start && end <= appointment.End;
+
+                if (
+    
+                    && (
+                        intersect1
+                        || intersect2
+                        || intersect3
+                        || intersect4
+                    )
                 )
-            )
-                return false;
+                    return false;
+            }
         }
         return true;
     }
@@ -105,13 +109,22 @@ public partial class AppointmentCreateForm : Form
 
         var selectedDate = DateOnly.FromDateTime(datePicker.Value);
         var selectedTime = TimeOnly.FromDateTime(timePicker.Value);
+        var selectedDateTime = new DateTime(selectedDate, selectedTime);
+        selectedDateTime = DateTime.SpecifyKind(selectedDateTime, DateTimeKind.Local);
         var selectedDuration = durationPicker.Value;
+
+        TimeZoneInfo est = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+
+        var utcDate = TimeZoneInfo.ConvertTimeToUtc(selectedDateTime);
+
+        var estDate = DateOnly.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(utcDate, est));
+        var estTime = TimeOnly.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(utcDate, est));
 
         if (
             Appointment.CheckTextBoxes(inputs)
-            || ValidateTime(selectedTime)
-            || ValidateDate(selectedDate)
-            || ValidateScheduleConflict(selectedDate, selectedTime, selectedDuration)
+            && ValidateTime(estTime)
+            && ValidateDate(estDate)
+            && ValidateScheduleConflict(DateOnly.FromDateTime(utcDate), TimeOnly.FromDateTime(utcDate), selectedDuration)
         )
         {
             newAppointment.Title = title;

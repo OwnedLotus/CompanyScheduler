@@ -122,16 +122,16 @@ public partial class AppointmentUpdateForm : Form
 
         if (
             Appointment.CheckTextBoxes(inputs)
-            || ValidateTime(selectedTime)
-            || ValidateDate(selectedDate)
-            || ValidateScheduleConflict(selectedDate, selectedTime, selectedDuration)
+            && ValidateTime(selectedTime)
+            && ValidateDate(selectedDate)
+            && ValidateScheduleConflict(selectedDate, selectedTime, selectedDuration)
         )
         {
             using (var context = new ClientScheduleContext())
             {
                 var _newAppointment = context.Appointments.FirstOrDefault(app => app.AppointmentId == _appointment.AppointmentId);
 
-                _newAppointment.Title = title;
+                _newAppointment!.Title = title;
                 _newAppointment.Description = description;
                 _newAppointment.Location = location;
                 _newAppointment.Contact = contact;
@@ -145,7 +145,7 @@ public partial class AppointmentUpdateForm : Form
                 _newAppointment.LastUpdateBy = _user?.UserName!;
 
            
-                _newAppointment.Customer = context.Customers.Find(_customer.CustomerId);
+                _newAppointment.Customer = context.Customers!.Find(_customer.CustomerId);
 
                 context.SaveChanges();
                 AppointmentUpdated?.Invoke(this, (_appointment, _newAppointment));
