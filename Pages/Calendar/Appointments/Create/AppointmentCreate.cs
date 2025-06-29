@@ -56,21 +56,19 @@ public partial class AppointmentCreateForm : Form
     /// <param name="time">Start time of appointment</param>
     /// <param name="duration">The length of the appointment</param>
     /// <returns></returns>
-    private bool ValidateScheduleConflict(DateOnly date, TimeOnly time, decimal duration)
+    private bool ValidateScheduleConflict(DateOnly date, TimeOnly time, int duration)
     {
         DateTime start = new DateTime(date, time);
-        DateTime end = start.AddMinutes((double)duration);               
+        DateTime end = start.AddMinutes(duration);               
 
 
         using var context = new ClientScheduleContext();
-        var appointments = context.Appointments.Include(a => a.Customer);
-
-        var customer = context.Customers.Find(_customer.CustomerId);
+        var appointments = context.Appointments
+                .Include(a => a.Customer)
+                .Where(a => a.CustomerId == _customer.CustomerId);
 
         foreach (var appointment in appointments)
         {
-            if (appointment.CustomerId != _customer.CustomerId) continue;
-
             var intersect1 = appointment.Start <= start && appointment.End <= end;
             var intersect2 = start <= appointment.Start && end <= appointment.End;
             var intersect3 = start <= appointment.Start && appointment.End <= end;
@@ -97,7 +95,8 @@ public partial class AppointmentCreateForm : Form
         var selectedTime = TimeOnly.FromDateTime(timePicker.Value);
         var selectedDateTime = new DateTime(selectedDate, selectedTime);
         selectedDateTime = DateTime.SpecifyKind(selectedDateTime, DateTimeKind.Local);
-        var selectedDuration = durationPicker.Value;
+
+        var parsed = int.TryParse(durationPicker.Text, out int selectedDuration);
 
         TimeZoneInfo est = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
 
@@ -107,7 +106,8 @@ public partial class AppointmentCreateForm : Form
         var estTime = TimeOnly.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(utcDate, est));
 
         if (
-            Appointment.CheckTextBoxes(inputs)
+            parsed
+            && Appointment.CheckTextBoxes(inputs)
             && ValidateTime(estTime)
             && ValidateDate(estDate)
             && ValidateScheduleConflict(DateOnly.FromDateTime(utcDate), TimeOnly.FromDateTime(utcDate), selectedDuration)
@@ -119,9 +119,9 @@ public partial class AppointmentCreateForm : Form
             newAppointment.Contact = contact;
             newAppointment.Type = type;
             newAppointment.Url = url;
-            newAppointment.Start = new DateTime(selectedDate, selectedTime).ToUniversalTime();
+            newAppointment.Start = utcDate;
             newAppointment.End = newAppointment
-                .Start.AddMinutes((double)selectedDuration)
+                .Start.AddMinutes(selectedDuration)
                 .ToUniversalTime();
             newAppointment.CreateDate = DateTime.UtcNow;
             newAppointment.LastUpdate = DateTime.UtcNow;

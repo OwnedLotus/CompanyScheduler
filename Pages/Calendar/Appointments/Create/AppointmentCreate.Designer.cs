@@ -206,7 +206,7 @@ partial class AppointmentCreateForm
     Label timeLabel;
     DateTimePicker timePicker;
     Label durationLabel;
-    NumericUpDown durationPicker;
+    TextBox durationPicker;
     #endregion
 
     #region Text Info

@@ -28,7 +28,7 @@ public partial class AppointmentUpdateForm : Form
         urlTextBox.Text = appointment.Url?.ToString();
         datePicker.Value = appointment.Start.ToLocalTime();
         timePicker.Value = appointment.Start.ToLocalTime();
-        durationPicker.Value = appointment.End.Subtract(appointment.Start).Minutes;
+        durationPicker.Text = appointment.End.Subtract(appointment.Start).Minutes.ToString();
         _customer = appointment.Customer;
         _user = user;
     }
@@ -70,23 +70,22 @@ public partial class AppointmentUpdateForm : Form
     /// <param name="time">Start time of appointment</param>
     /// <param name="duration">The length of the appointment</param>
     /// <returns></returns>
-    private bool ValidateScheduleConflict(DateOnly date, TimeOnly time, decimal duration)
+    private bool ValidateScheduleConflict(DateOnly date, TimeOnly time, int duration)
     {
         DateTime start = new DateTime(date, time);
-        DateTime end = start.AddMinutes((double)duration);
+        DateTime end = start.AddMinutes(duration);
 
         List<Appointment> allAppointments = [];
 
         using var context = new ClientScheduleContext();
-        var appointments = context.Appointments.Include(a => a.Customer);
+        var appointments = context.Appointments
+            .Include(a => a.Customer)
+            .Where(a => a.CustomerId == _customer!.CustomerId);
 
-        var customer = context.Customers.Find(_customer.CustomerId);
 
         foreach (var appointment in allAppointments)
         {
-            // in the case that the edited order is changed a small amount
-            if (appointment.CustomerId != _customer.CustomerId && appointment.AppointmentId == _appointment.AppointmentId) continue;
-            // if is the same customer and the schedules conflict
+            if (appointment.AppointmentId == _appointment.AppointmentId) continue;
 
             var intersect1 = appointment.Start <= start && appointment.End <= end;
             var intersect2 = start <= appointment.Start && end <= appointment.End;
@@ -114,7 +113,8 @@ public partial class AppointmentUpdateForm : Form
         var selectedTime = TimeOnly.FromDateTime(timePicker.Value);
         var selectedDateTime = new DateTime(selectedDate, selectedTime);
         selectedDateTime = DateTime.SpecifyKind(selectedDateTime, DateTimeKind.Local);
-        var selectedDuration = durationPicker.Value;
+        
+        var parsed = int.TryParse(durationPicker.Text, out int selectedDuration);
 
         TimeZoneInfo est = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard time");
 
@@ -124,7 +124,8 @@ public partial class AppointmentUpdateForm : Form
         var estTime = TimeOnly.FromDateTime(TimeZoneInfo.ConvertTimeToUtc(selectedDateTime));
 
         if (
-            Appointment.CheckTextBoxes(inputs)
+            parsed
+            && Appointment.CheckTextBoxes(inputs)
             && ValidateTime(estTime)
             && ValidateDate(estDate)
             && ValidateScheduleConflict(DateOnly.FromDateTime(utcDate), TimeOnly.FromDateTime(utcDate), selectedDuration)
@@ -142,7 +143,7 @@ public partial class AppointmentUpdateForm : Form
                 _newAppointment.Url = url;
                 _newAppointment.Start = new DateTime(selectedDate, selectedTime).ToUniversalTime();
                 _newAppointment.End = _newAppointment
-                    .Start.AddMinutes((double)selectedDuration)
+                    .Start.AddMinutes(selectedDuration)
                     .ToUniversalTime();
                 _newAppointment.LastUpdate = DateTime.UtcNow;
                 _newAppointment.LastUpdateBy = _user?.UserName!;
