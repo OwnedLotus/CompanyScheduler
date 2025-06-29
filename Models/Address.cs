@@ -22,7 +22,7 @@ public partial class Address
 
     public string CreatedBy { get; set; } = null!;
 
-    public DateTime LastUpdate { get; set; }
+    public DateTime LastUpdate { get => TimeZoneInfo.ConvertTimeFromUtc(LastUpdate, TimeZoneInfo.Local); set => LastUpdate = value; }
 
     public string LastUpdateBy { get; set; } = null!;
 
