@@ -24,7 +24,7 @@ public partial class HomeForm : Form
     public HomeForm(User user)
     {
         InitializeComponent();
-        Load();
+        LoadData();
         CheckSoonAppointments(15);
         User = user;
 
@@ -32,7 +32,7 @@ public partial class HomeForm : Form
         appointmentDataGrid.DataSource = appointments;
     }
 
-    private void Load()
+    private void LoadData()
     {
         using var context = new ClientScheduleContext();
 
@@ -67,8 +67,7 @@ public partial class HomeForm : Form
 
     private void CustomerDataGrid_Changed(object sender, EventArgs e)
     {
-        Int32 selectedCellCount = customerDataGrid.
-            GetCellCount(DataGridViewElementStates.Selected);
+        Int32 selectedCellCount = customerDataGrid.GetCellCount(DataGridViewElementStates.Selected);
 
         if (selectedCellCount > 0)
         {
@@ -80,7 +79,7 @@ public partial class HomeForm : Form
             {
                 var selectedRow = customerDataGrid.SelectedRows;
 
-                if(selectedRow.Count > 0)
+                if (selectedRow.Count > 0)
                 {
                     _selectedCustomer = selectedRow[0].DataBoundItem as Customer;
                 }
@@ -88,15 +87,15 @@ public partial class HomeForm : Form
         }
     }
 
-
     private void AppointmentDataGrid_IndexChanged(object sender, EventArgs e)
     {
-        Int32 selectedCellCount = appointmentDataGrid.
-            GetCellCount(DataGridViewElementStates.Selected);
+        Int32 selectedCellCount = appointmentDataGrid.GetCellCount(
+            DataGridViewElementStates.Selected
+        );
 
         if (selectedCellCount > 0)
         {
-            if(appointmentDataGrid.AreAllCellsSelected(true))
+            if (appointmentDataGrid.AreAllCellsSelected(true))
             {
                 MessageBox.Show("Too many cells selected!", "Selected Cells");
             }
@@ -149,10 +148,7 @@ public partial class HomeForm : Form
     private void DeleteCustomerButton_Clicked(object sender, EventArgs e)
     {
         using var context = new ClientScheduleContext();
-        if (
-            _selectedCustomer is null
-            || !context.Customers.Contains(_selectedCustomer)
-        )
+        if (_selectedCustomer is null || !context.Customers.Contains(_selectedCustomer))
         {
             string message = "Failed to Delete Customer";
             string caption = "Missing Customer";
@@ -164,21 +160,19 @@ public partial class HomeForm : Form
         context.Customers.Remove(_selectedCustomer);
         customers.Remove(_selectedCustomer);
         context.SaveChanges();
-
     }
 
-    private void AppointmentsButton_Clicked(object sender, EventArgs e) 
+    private void AppointmentsButton_Clicked(object sender, EventArgs e)
     {
         var calForm = new CalendarForm(this, calendar, User);
         calForm.Show();
 
         calForm.ScheduleUpdated += (sender, cal) =>
         {
-            Load();
+            LoadData();
         };
 
         Hide();
-
     }
 
     // Report generating functions
