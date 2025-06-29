@@ -4,6 +4,7 @@ namespace CompanyScheduler.Pages.Calendar.Appointments;
 
 public partial class AppointmentCreateForm : Form
 {
+    public EventHandler<Appointment>? AppointmentCreated;
     private Appointment newAppointment = new();
     private readonly Form previousForm;
     private readonly Customer _customer;
@@ -127,7 +128,7 @@ public partial class AppointmentCreateForm : Form
             newAppointment.LastUpdate = DateTime.UtcNow;
             newAppointment.LastUpdateBy = _user.UserName;
 
-            using(var context = new ClientScheduleContext())
+            using (var context = new ClientScheduleContext())
             {
                 context.Appointments.Add(newAppointment);
                 context.SaveChanges();
