@@ -4,6 +4,9 @@
     <Compile Update="Pages\Calendar\Appointments\Create\AppointmentCreate.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Pages\Calendar\Appointments\Show\ShowSingle.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Pages\Calendar\Appointments\Update\AppointmentUpdate.cs">
       <SubType>Form</SubType>
     </Compile>

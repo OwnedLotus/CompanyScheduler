@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Globalization;
 using CompanyScheduler.Models;
 using CompanyScheduler.Pages.Calendar.Appointments;
+using CompanyScheduler.Pages.Calendar.Appointments.Show;
 
 namespace CompanyScheduler.Pages.Calendar;
 
@@ -56,6 +57,14 @@ public partial class CalendarForm : Form
             }
 
         appointmentDataGrid.DataSource = _appointments;
+    }
+
+    private void ShowSingleAppButton_Click(object sender, EventArgs e)
+    {
+        if (_selectedAppointment is null) return;
+        var showSingle = new ShowSingleForm(this, _selectedAppointment);
+        showSingle.Show();
+        Hide();
     }
 
     private void LoadData()

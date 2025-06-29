@@ -39,6 +39,15 @@ partial class CalendarForm
 
         datePicker.ValueChanged += DatePicker_ValueChanged;
 
+        showSingleAppButton = new()
+        {
+            Name = "showSingleAppButton",
+            AutoSize = true,
+            Location = new Point(200, 10),
+            Text = "Show Appointment"
+        };
+        showSingleAppButton.Click += ShowSingleAppButton_Click;
+
         customerDataGrid = new()
         {
             Location = new Point(50, 80),
@@ -90,6 +99,7 @@ partial class CalendarForm
 
         Controls.Add(datePicker);
         //Controls.Add(timePicker);
+        Controls.Add(showSingleAppButton);
 
         Controls.Add(customerDataGrid);
         Controls.Add(appointmentDataGrid);
@@ -99,12 +109,11 @@ partial class CalendarForm
         Controls.Add(deleteAppointmentButton);
     }
 
-
     Label titleLabel;
 
     DateTimePicker datePicker;
-    //DateTimePicker timePicker;
 
+    Button showSingleAppButton;
     Button addAppointmentButton;
     Button updateAppointmentButton;
     Button deleteAppointmentButton;
