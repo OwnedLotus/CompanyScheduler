@@ -7,6 +7,7 @@ public partial class AppointmentUpdateForm : Form
     public EventHandler<Appointment>? AppointmentUpdated;
     private Appointment _newAppointment;
     private Appointment _appointment;
+    private Appointment updatedAppointment;
     private readonly Form previousForm;
     private readonly Customer? _customer;
     private User? _user;
@@ -18,6 +19,7 @@ public partial class AppointmentUpdateForm : Form
         previousForm = prevForm;
         _newAppointment = appointment;
         _appointment = appointment;
+        updatedAppointment = appointment;
         titleTextBox.Text = appointment.Title;
         descriptionTextBox.Text = appointment.Description;
         locationTextBox.Text = appointment.Location;

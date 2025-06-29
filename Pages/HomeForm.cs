@@ -14,23 +14,37 @@ public partial class HomeForm : Form
 {
     private readonly DateTime currentTime = DateTime.UtcNow;
     private readonly GregorianCalendar calendar = new();
-    private BindingList<Appointment>? appointments;
+    private BindingList<Appointment> appointments = new();
+    private BindingList<Customer> customers = new();
     private Appointment? _selectedAppointment;
+    private Customer? _selectedCustomer;
 
     public User User { get; private set; }
 
     public HomeForm(User user)
     {
         InitializeComponent();
-        LoadAppointments();
+        Load();
         CheckSoonAppointments(15);
         User = user;
+
+        customerDataGrid.DataSource = customers;
+        appointmentDataGrid.DataSource = appointments;
     }
 
-    private void LoadAppointments()
+    private void Load()
     {
         using var context = new ClientScheduleContext();
-        appointments = [.. context.Appointments.Include(a => a.User)];
+
+        foreach (var customer in context.Customers)
+        {
+            customers.Add(customer);
+        }
+
+        foreach (var appointment in context.Appointments)
+        {
+            appointments.Add(appointment);
+        }
     }
 
     private void CheckSoonAppointments(int span)
@@ -51,11 +65,45 @@ public partial class HomeForm : Form
         }
     }
 
-    private void AppointmentListView_IndexChanged(object sender, EventArgs e)
+    private void CustomerDataGrid_Changed(object sender, EventArgs e)
     {
-        if (appointmentListView.SelectedItems.Count > 0)
+        Int32 selectedCellCount = customerDataGrid.
+            GetCellCount(DataGridViewElementStates.Selected);
+
+        if (selectedCellCount > 0)
         {
-            _selectedAppointment = appointmentListView.SelectedItems[0].Tag as Appointment;
+            if (customerDataGrid.AreAllCellsSelected(true))
+            {
+                MessageBox.Show("Too many cells selected!", "Selected Cells");
+            }
+            else
+            {
+                var selectedRow = customerDataGrid.SelectedRows;
+
+                if(selectedRow.Count > 0)
+                {
+                    _selectedCustomer = selectedRow[0].DataBoundItem as Customer;
+                }
+            }
+        }
+    }
+
+
+    private void AppointmentDataGrid_IndexChanged(object sender, EventArgs e)
+    {
+        Int32 selectedCellCount = appointmentDataGrid.
+            GetCellCount(DataGridViewElementStates.Selected);
+
+        if (selectedCellCount > 0)
+        {
+            if(appointmentDataGrid.AreAllCellsSelected(true))
+            {
+                MessageBox.Show("Too many cells selected!", "Selected Cells");
+            }
+            else
+            {
+                _selectedAppointment = appointmentDataGrid.SelectedCells[0].Value as Appointment;
+            }
         }
     }
 
@@ -72,17 +120,12 @@ public partial class HomeForm : Form
 
     private void CreateCustomerButton_Clicked(object sender, EventArgs e)
     {
-        if (_selectedAppointment is null)
-            return;
         var CreateCustomer = new CustomerCreateForm(User, this);
 
-        using (var context = new ClientScheduleContext())
+        CreateCustomer.CustomerCreated += (sender, customer) =>
         {
-            CreateCustomer.CustomerCreated += (sender, customer) =>
-                _selectedAppointment.Customer = customer;
-            context.Appointments.Add(_selectedAppointment);
-            context.SaveChanges();
-        }
+            customers.Add(customer);
+        };
 
         CreateCustomer.Show();
         Hide();
@@ -90,20 +133,13 @@ public partial class HomeForm : Form
 
     private void UpdateCustomerButton_Clicked(object sender, EventArgs e)
     {
-        if (_selectedAppointment is null || _selectedAppointment.Customer is null)
+        if (_selectedCustomer is null)
             return;
 
-        var tbdAppointment = _selectedAppointment;
-
-        var UpdateCustomer = new CustomerUpdateForm(User, _selectedAppointment.Customer, this);
+        var UpdateCustomer = new CustomerUpdateForm(User, _selectedCustomer, this);
         UpdateCustomer.CustomerUpdated += (sender, customer) =>
         {
-            using var context = new ClientScheduleContext();
-            context.Appointments.Remove(_selectedAppointment);
-
-            _selectedAppointment.Customer = customer;
-            context.Appointments.Add(_selectedAppointment);
-            context.SaveChanges();
+            customers.Add(customer);
         };
 
         UpdateCustomer.Show();
@@ -114,9 +150,8 @@ public partial class HomeForm : Form
     {
         using var context = new ClientScheduleContext();
         if (
-            _selectedAppointment is null
-            || _selectedAppointment.User is null
-            || !context.Appointments.Contains(_selectedAppointment)
+            _selectedCustomer is null
+            || !context.Customers.Contains(_selectedCustomer)
         )
         {
             string message = "Failed to Delete Customer";
@@ -126,11 +161,25 @@ public partial class HomeForm : Form
             return;
         }
 
-        context.Appointments.Remove(_selectedAppointment);
+        context.Customers.Remove(_selectedCustomer);
+        customers.Remove(_selectedCustomer);
         context.SaveChanges();
+
     }
 
-    private void AppointmentsButton_Clicked(object sender, EventArgs e) { }
+    private void AppointmentsButton_Clicked(object sender, EventArgs e) 
+    {
+        var calForm = new CalendarForm(this, calendar, User);
+        calForm.Show();
+
+        calForm.ScheduleUpdated += (sender, cal) =>
+        {
+            Load();
+        };
+
+        Hide();
+
+    }
 
     // Report generating functions
     private IQueryable<string>? GenerateAppointmentTypesByMonth(DateOnly date) =>

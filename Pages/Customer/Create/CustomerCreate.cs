@@ -4,7 +4,7 @@ namespace CompanyScheduler.Pages.Customers;
 
 public partial class CustomerCreateForm : Form
 {
-    public event EventHandler<Customer>? CustomerCreated;
+    public EventHandler<Customer> CustomerCreated;
     public Customer Customer { get; private set; } = new();
     public User User { get; private set; }
     private readonly Form _mainForm;
@@ -73,6 +73,13 @@ public partial class CustomerCreateForm : Form
             Customer.Active = true;
             Customer.LastUpdate = DateTime.UtcNow;
             Customer.LastUpdateBy = User.UserName;
+            Customer.CreatedBy = User.UserName;
+
+            using (var context = new ClientScheduleContext())
+            {
+                context.Customers.Add(Customer);
+                context.SaveChanges();
+            }
 
             CustomerCreated?.Invoke(this, Customer);
             _mainForm.Show();

@@ -7,6 +7,7 @@ namespace CompanyScheduler.Pages.Calendar;
 
 public partial class CalendarForm : Form
 {
+    public EventHandler? ScheduleUpdated;
     private readonly DateOnly today = DateOnly.FromDateTime(DateTime.Now);
 
     DateOnly? selectedDate;
@@ -15,8 +16,11 @@ public partial class CalendarForm : Form
 
     private Form _homeForm;
 
-    BindingList<Customer>? _customers;
-    BindingList<Appointment>? _appointments;
+    BindingList<Customer> _customers = new();
+    BindingList<Appointment> _appointments = new();
+
+    private Customer? selectedCustomer;
+    private Appointment? selectedAppointment;
 
     User _currentUser;
     Customer _selectedCustomer = new();
@@ -30,7 +34,7 @@ public partial class CalendarForm : Form
         LoadData();
 
         _homeForm = homeForm;
-        customerListBox.DataSource = _customers;
+        customerDataGrid.DataSource = _customers;
         calendar = cal;
         _currentUser = user;
     }
@@ -50,18 +54,27 @@ public partial class CalendarForm : Form
                 ];
             }
 
-        appointmentListBox.DataSource = _appointments;
+        appointmentDataGrid.DataSource = _appointments;
     }
 
     private void LoadData()
     {
         using var context = new ClientScheduleContext();
-        _customers = [.. context.Customers];
-        _appointments = [.. context.Appointments];
+
+        foreach (var customer in context.Customers)
+        {
+            _customers.Add(customer);
+        }
+
+        foreach (var appointment in context.Appointments)
+        {
+            _appointments.Add(appointment);
+        }
     }
 
     private void QuitButton_Click(object sender, EventArgs e)
     {
+        ScheduleUpdated?.Invoke(this, EventArgs.Empty);
         _homeForm.Show();
         Close();
     }
@@ -95,12 +108,12 @@ public partial class CalendarForm : Form
 
     private void DeleteAppointmentButton_Clicked(object sender, EventArgs e)
     {
-        var selectedAppointment = (Appointment?)appointmentListBox.SelectedValue;
-
         using var context = new ClientScheduleContext();
+
         if (selectedAppointment is not null && context.Appointments.Contains(selectedAppointment))
         {
             context.Appointments.Remove(selectedAppointment);
+            _appointments.Remove(selectedAppointment);
             context.SaveChanges();
         }
         else
