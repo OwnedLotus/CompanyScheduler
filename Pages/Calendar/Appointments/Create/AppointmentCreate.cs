@@ -61,37 +61,23 @@ public partial class AppointmentCreateForm : Form
         DateTime start = new DateTime(date, time);
         DateTime end = start.AddMinutes((double)duration);               
 
-        List<Appointment> allAppointments = [];
 
-        Customer? customer;
+        using var context = new ClientScheduleContext();
+        var appointments = context.Appointments.Include(a => a.Customer);
 
-        using (var context = new ClientScheduleContext())
+        var customer = context.Customers.Find(_customer.CustomerId);
+
+        foreach (var appointment in appointments)
         {
-            var appointments = context.Appointments.Include(a => a.Customer);
+            if (appointment.CustomerId != _customer.CustomerId) continue;
 
-            customer = context.Customers.Find(_customer.CustomerId);
+            var intersect1 = appointment.Start <= start && appointment.End <= end;
+            var intersect2 = start <= appointment.Start && end <= appointment.End;
+            var intersect3 = start <= appointment.Start && appointment.End <= end;
+            var intersect4 = appointment.Start <= start && end <= appointment.End;
 
-
-            foreach (var appointment in appointments)
-            {
-                if (appointment.CustomerId!= _customer.CustomerId) continue;
-
-                var intersect1 = appointment.Start <= start && appointment.End <= end;
-                var intersect2 = start <= appointment.Start && end <= appointment.End;
-                var intersect3 = start <= appointment.Start && appointment.End <= end;
-                var intersect4 = appointment.Start <= start && end <= appointment.End;
-
-                if (
-    
-                    && (
-                        intersect1
-                        || intersect2
-                        || intersect3
-                        || intersect4
-                    )
-                )
-                    return false;
-            }
+            if (intersect1 || intersect2 || intersect3 || intersect4)
+                return false;
         }
         return true;
     }
