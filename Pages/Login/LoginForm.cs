@@ -43,21 +43,12 @@ public partial class LoginForm : Form
     {
         // Check if user is registered
         using var context = new ClientScheduleContext();
-        var users = context.Users.AsParallel();
 
-        foreach (var user in users)
+        var user = context.Users.FirstOrDefault(user => user.UserName == userBox.Text && user.Password == passBox.Text);
+        
+        if (user is not null)
         {
-            if (user is not null)
-                AuthenticateUser(user);
-        }
-    }
-
-    private void AuthenticateUser(User user)
-    {
-        if (userBox.Text == user.UserName && passBox.Text == user.Password)
-        {
-            // Enter the application
-            UpdateLoginLog(userBox.Text);
+            UpdateLoginLog(user.UserName);
 
             var home = new HomeForm(user);
             home.Show();
@@ -65,15 +56,10 @@ public partial class LoginForm : Form
         }
         else
         {
-            switch (selection)
-            {
-                case 0:
-                    MessageBox.Show(messageFailedEn, captionFailedEn, MessageBoxButtons.OK);
-                    break;
-                case 1:
-                    MessageBox.Show(messageFailedJp, captionFailedJp, MessageBoxButtons.OK);
-                    break;
-            }
+            var message = selection == 0 ? messageFailedEn : messageFailedJp;
+            var caption = selection == 0 ? captionFailedEn : captionFailedJp;
+
+            MessageBox.Show(message, caption, MessageBoxButtons.OK);
         }
     }
 

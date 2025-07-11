@@ -123,8 +123,8 @@ public partial class AppointmentCreateForm : Form
             newAppointment.End = newAppointment
                 .Start.AddMinutes(selectedDuration)
                 .ToUniversalTime();
-            newAppointment.CreateDate = DateTime.UtcNow;
-            newAppointment.LastUpdate = DateTime.UtcNow;
+            newAppointment.CreateDate = DateTime.Now;
+            newAppointment.LastUpdate = DateTime.Now;
             newAppointment.LastUpdateBy = _user.UserName;
             newAppointment.CreatedBy = _user.UserName;
 

@@ -26,8 +26,8 @@ public partial class AppointmentUpdateForm : Form
         contactTextBox.Text = appointment.Contact;
         typeTextBox.Text = appointment.Type;
         urlTextBox.Text = appointment.Url?.ToString();
-        datePicker.Value = appointment.Start.ToLocalTime();
-        timePicker.Value = appointment.Start.ToLocalTime();
+        datePicker.Value = appointment.Start;
+        timePicker.Value = appointment.Start;
         durationPicker.Text = appointment.End.Subtract(appointment.Start).Minutes.ToString();
         _customer = appointment.Customer;
         _user = user;
@@ -141,11 +141,10 @@ public partial class AppointmentUpdateForm : Form
                 _newAppointment.Contact = contact;
                 _newAppointment.Type = type;
                 _newAppointment.Url = url;
-                _newAppointment.Start = new DateTime(selectedDate, selectedTime).ToUniversalTime();
+                _newAppointment.Start = new DateTime(selectedDate, selectedTime);
                 _newAppointment.End = _newAppointment
-                    .Start.AddMinutes(selectedDuration)
-                    .ToUniversalTime();
-                _newAppointment.LastUpdate = DateTime.UtcNow;
+                    .Start.AddMinutes(selectedDuration);
+                _newAppointment.LastUpdate = DateTime.Now;
                 _newAppointment.LastUpdateBy = _user?.UserName!;
 
            

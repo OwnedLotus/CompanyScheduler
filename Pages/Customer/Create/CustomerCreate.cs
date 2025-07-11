@@ -41,18 +41,18 @@ public partial class CustomerCreateForm : Form
             var country = new Country()
             {
                 Country1 = customerCountryName,
-                CreateDate = DateTime.UtcNow,
+                CreateDate = DateTime.Now,
                 CreatedBy = User.UserName,
-                LastUpdate = DateTime.UtcNow,
+                LastUpdate = DateTime.Now,
                 LastUpdateBy = User.UserName,
             };
             var city = new City()
             {
                 City1 = customerCityName,
                 Country = country,
-                CreateDate = DateTime.UtcNow,
+                CreateDate = DateTime.Now,
                 CreatedBy = User.UserName,
-                LastUpdate = DateTime.UtcNow,
+                LastUpdate = DateTime.Now,
                 LastUpdateBy = User.UserName,
             };
             var address = new Address()
@@ -62,16 +62,16 @@ public partial class CustomerCreateForm : Form
                 City = city,
                 PostalCode = customerPostal,
                 Phone = customerPhone,
-                CreateDate = DateTime.UtcNow,
+                CreateDate = DateTime.Now,
                 CreatedBy = User.UserName,
-                LastUpdate = DateTime.UtcNow,
+                LastUpdate = DateTime.Now,
                 LastUpdateBy = User.UserName,
             };
 
             Customer.CustomerName = customerName;
             Customer.Address = address;
             Customer.Active = true;
-            Customer.LastUpdate = DateTime.UtcNow;
+            Customer.LastUpdate = DateTime.Now;
             Customer.LastUpdateBy = User.UserName;
             Customer.CreatedBy = User.UserName;
 

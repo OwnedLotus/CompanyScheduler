@@ -55,18 +55,18 @@ public partial class CustomerUpdateForm : Form
             var country = new Country()
             {
                 Country1 = customerCountryName,
-                CreateDate = DateTime.UtcNow,
+                CreateDate = DateTime.Now,
                 CreatedBy = User.UserName,
-                LastUpdate = DateTime.UtcNow,
+                LastUpdate = DateTime.Now,
                 LastUpdateBy = User.UserName
             };
             var city = new City()
             {
                 City1 = customerCityName,
                 Country = country,
-                CreateDate = DateTime.UtcNow,
+                CreateDate = DateTime.Now,
                 CreatedBy = User.UserName,
-                LastUpdate = DateTime.UtcNow,
+                LastUpdate = DateTime.Now,
                 LastUpdateBy = User.UserName
             };
             var address = new Address()
@@ -76,16 +76,16 @@ public partial class CustomerUpdateForm : Form
                 City = city,
                 PostalCode = customerPostal,
                 Phone = customerPhone,
-                CreateDate = DateTime.UtcNow,
+                CreateDate = DateTime.Now,
                 CreatedBy = User.UserName,
-                LastUpdate = DateTime.UtcNow,
+                LastUpdate = DateTime.Now,
                 LastUpdateBy = User.UserName,
             };
 
             _updatedCustomer.CustomerName = customerName;
             _updatedCustomer.Address = address;
             _updatedCustomer.Active = true;
-            _updatedCustomer.LastUpdate = DateTime.UtcNow;
+            _updatedCustomer.LastUpdate = DateTime.Now;
             _updatedCustomer.LastUpdateBy = User.UserName;
 
             using (var context = new ClientScheduleContext())

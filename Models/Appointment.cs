@@ -5,6 +5,10 @@ namespace CompanyScheduler.Models;
 
 public partial class Appointment
 {
+    private DateTime _createDate;
+    private DateTime _lastUpdate;
+
+
     public int AppointmentId { get; set; }
 
     public int CustomerId { get; set; }
@@ -27,11 +31,11 @@ public partial class Appointment
 
     public DateTime End { get; set; }
 
-    public DateTime CreateDate { get => TimeZoneInfo.ConvertTimeFromUtc(CreateDate, TimeZoneInfo.Local); set => CreateDate = value; }
+    public DateTime CreateDate { get => _createDate.ToLocalTime(); set => _createDate = value.ToUniversalTime(); }
 
     public string CreatedBy { get; set; } = null!;
 
-    public DateTime LastUpdate { get => TimeZoneInfo.ConvertTimeFromUtc(LastUpdate, TimeZoneInfo.Local); set => LastUpdate = value; }
+    public DateTime LastUpdate { get => _lastUpdate.ToLocalTime(); set => _lastUpdate = value.ToUniversalTime(); }
 
     public string LastUpdateBy { get; set; } = null!;
 

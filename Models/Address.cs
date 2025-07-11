@@ -6,6 +6,9 @@ namespace CompanyScheduler.Models;
 
 public partial class Address
 {
+    private DateTime _createDate;
+    private DateTime _lastUpdate;
+
     public int AddressId { get; set; }
 
     public string Address1 { get; set; } = null!;
@@ -18,11 +21,11 @@ public partial class Address
 
     public string Phone { get; set; } = null!;
 
-    public DateTime CreateDate { get; set; }
+    public DateTime CreateDate { get => _createDate.ToLocalTime(); set => _createDate = value.ToUniversalTime(); }
 
     public string CreatedBy { get; set; } = null!;
 
-    public DateTime LastUpdate { get => TimeZoneInfo.ConvertTimeFromUtc(LastUpdate, TimeZoneInfo.Local); set => LastUpdate = value; }
+    public DateTime LastUpdate { get => _lastUpdate.ToLocalTime(); set => _lastUpdate = value.ToUniversalTime(); }
 
     public string LastUpdateBy { get; set; } = null!;
 
