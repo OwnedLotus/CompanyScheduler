@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Globalization;
 using CompanyScheduler.Models;
+using CompanyScheduler.Models.Errors;
 using CompanyScheduler.Pages.Calendar;
 using CompanyScheduler.Pages.Customers;
 using CompanyScheduler.Pages.Reports;
@@ -109,51 +110,67 @@ public partial class HomeForm : Form
 
     private void CreateCustomerButton_Clicked(object sender, EventArgs e)
     {
-        var CreateCustomer = new CustomerCreateForm(_user, this);
-
-        CreateCustomer.CustomerCreated += (sender, customer) =>
+        try
         {
-            customers.Add(customer);
-        };
+            if (_user is null)
+                return;
+            var CreateCustomer = new CustomerCreateForm(_user, this);
 
-        CreateCustomer.Show();
-        Hide();
+            CreateCustomer.CustomerCreated += (sender, customer) =>
+            {
+                customers.Add(customer);
+            };
+
+            CreateCustomer.Show();
+            Hide();
+        }
+        catch (FailedCustomerCreateException) { }
     }
 
     private void UpdateCustomerButton_Clicked(object sender, EventArgs e)
     {
-        if (_selectedCustomer is null)
-            return;
-
-        var UpdateCustomer = new CustomerUpdateForm(_user, _selectedCustomer, this);
-        UpdateCustomer.CustomerUpdated += (sender, customer) =>
+        try
         {
-            customers.Add(customer);
-        };
+            if (_selectedCustomer is null || _user is null)
+                return;
 
-        UpdateCustomer.Show();
-        Hide();
+            var UpdateCustomer = new CustomerUpdateForm(_user, _selectedCustomer, this);
+            UpdateCustomer.CustomerUpdated += (sender, customer) =>
+            {
+                customers.Add(customer);
+            };
+
+            UpdateCustomer.Show();
+            Hide();
+        }
+        catch (FailedCustomerUpdatedException) { }
     }
 
     private void DeleteCustomerButton_Clicked(object sender, EventArgs e)
     {
-        using var context = new ClientScheduleContext();
-        if (_selectedCustomer is null || !context.Customers.Contains(_selectedCustomer))
+        try
         {
-            string message = "Failed to Delete Customer";
-            string caption = "Missing Customer";
-            MessageBoxButtons messageBoxButtons = MessageBoxButtons.OK;
-            MessageBox.Show(message, caption, messageBoxButtons);
-            return;
-        }
+            using var context = new ClientScheduleContext();
+            if (_selectedCustomer is null || !context.Customers.Contains(_selectedCustomer))
+            {
+                string message = "Failed to Delete Customer";
+                string caption = "Missing Customer";
+                MessageBoxButtons messageBoxButtons = MessageBoxButtons.OK;
+                MessageBox.Show(message, caption, messageBoxButtons);
+                return;
+            }
 
-        context.Customers.Remove(_selectedCustomer);
-        customers.Remove(_selectedCustomer);
-        context.SaveChanges();
+            context.Customers.Remove(_selectedCustomer);
+            customers.Remove(_selectedCustomer);
+            context.SaveChanges();
+        }
+        catch (FailedCustomerDeleteException) { }
     }
 
     private void AppointmentsButton_Clicked(object sender, EventArgs e)
     {
+        if (_user is null)
+            return;
         var calForm = new CalendarForm(this, calendar, _user);
         calForm.Show();
 
@@ -166,25 +183,52 @@ public partial class HomeForm : Form
     }
 
     private void GenReportOneLabel_Click(object sender, EventArgs e) =>
-        new ReportForm(this, "Generate Appointments For this Month", [.. GenerateAppointmentTypesByMonth()]).Show();
+        testfunc();
+
+        // new ReportForm(
+        //     this,
+        //     "Generate Appointments For this Month",
+        //     // [.. GenerateAppointmentTypesByMonth()]
+        // ).Show();
 
     // Report generating functions
-    private IQueryable<string>? GenerateAppointmentTypesByMonth() =>
-        new ClientScheduleContext()
+    // private IQueryable<Tuple<string, int>>? GenerateAppointmentTypesByMonth() =>
+    //     new ClientScheduleContext()
+    //         .Appointments.GroupBy(appointment => appointment.Start.Month)
+    //         .Select(appointment => new { Month = appointment.Key, Count = appointment.Count() });
+
+    private void testfunc()
+    {
+        var items = new ClientScheduleContext()
             .Appointments.GroupBy(appointment => appointment.Start.Month)
-            .Select(x => x.First().Type)
-            .Distinct();
+            .Select(appointment => appointment.Key);
+
+    }
+
+
 
     private void GenReportTwoLabel_Click(object sender, EventArgs e) =>
-        new ReportForm(this, "Schedule By Customer", [.. GenerateSchedule()?.SelectMany(list => list)]).Show();
+        new ReportForm(
+            this,
+            "Schedule By Customer",
+            [.. GenerateSchedule()?.SelectMany(list => list)]
+        ).Show();
 
     private IQueryable<List<string>>? GenerateSchedule() =>
         new ClientScheduleContext()
             .Appointments.GroupBy(appointment => appointment.User)
-            .Select(appointments => appointments.Select(x => $"Customer: {x.Customer.CustomerName} has appointment {x.Title}").ToList());
+            .Select(appointments =>
+                appointments
+                    .Select(x => $"Customer: {x.Customer.CustomerName} has appointment {x.Title}")
+                    .ToList()
+            );
 
-    private void GenReportThreeLabel_Click(object sender, EventArgs e) => 
-        new ReportForm(this, "All Customers With Appointments", [.. GenerateAllCustomerWithAppointments()?.Select(x => x.ToString())]).Show();
+    private void GenReportThreeLabel_Click(object sender, EventArgs e) =>
+        new ReportForm(
+            this,
+            "All Customers With Appointments",
+            [.. GenerateAllCustomerWithAppointments()?.Select(x => x.ToString())]
+        ).Show();
 
     private IQueryable<bool>? GenerateAllCustomerWithAppointments() =>
         new ClientScheduleContext()

@@ -36,7 +36,14 @@ public partial class CustomerCreateForm : Form
             customerCountryName,
         ];
 
-        if (Appointment.CheckTextBoxes(inputs) && Address.OnlyDigitsAndDashes(customerPhone))
+        if (!Appointment.CheckTextBoxes(inputs) || !Address.OnlyDigitsAndDashes(customerPhone))
+        {
+            string message = "Failed to Create Customer";
+            string caption = "Malformed Input";
+            MessageBoxButtons messageBoxButtons = MessageBoxButtons.OK;
+            MessageBox.Show(message, caption, messageBoxButtons);
+        }
+        else
         {
             var country = new Country()
             {
@@ -84,13 +91,6 @@ public partial class CustomerCreateForm : Form
             CustomerCreated?.Invoke(this, Customer);
             _mainForm.Show();
             Close();
-        }
-        else
-        {
-            string message = "Failed to Create Customer";
-            string caption = "Malformed Input";
-            MessageBoxButtons messageBoxButtons = MessageBoxButtons.OK;
-            MessageBox.Show(message, caption, messageBoxButtons);
         }
     }
 

@@ -37,15 +37,31 @@ public partial class LoginForm : Form
 
     public string LabelText { get; private set; } = RegionInfo.CurrentRegion.DisplayName;
 
-    public LoginForm() => InitializeComponent();
+    public LoginForm()
+    {
+        InitializeComponent();
+
+        if (
+            RegionInfo.CurrentRegion.TwoLetterISORegionName.Equals(
+                "JP",
+                StringComparison.OrdinalIgnoreCase
+            )
+        )
+        {
+            selection = 1;
+        }
+        selectionBox.SelectedIndex = selection;
+    }
 
     private void LoginButton_Clicked(object sender, EventArgs e)
     {
         // Check if user is registered
         using var context = new ClientScheduleContext();
 
-        var user = context.Users.FirstOrDefault(user => user.UserName == userBox.Text && user.Password == passBox.Text);
-        
+        var user = context.Users.FirstOrDefault(user =>
+            user.UserName == userBox.Text && user.Password == passBox.Text
+        );
+
         if (user is not null)
         {
             UpdateLoginLog(user.UserName);
