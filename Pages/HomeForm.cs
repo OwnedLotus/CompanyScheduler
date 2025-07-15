@@ -183,32 +183,21 @@ public partial class HomeForm : Form
     }
 
     private void GenReportOneLabel_Click(object sender, EventArgs e) =>
-        testfunc();
-
-        // new ReportForm(
-        //     this,
-        //     "Generate Appointments For this Month",
-        //     // [.. GenerateAppointmentTypesByMonth()]
-        // ).Show();
+        new ReportOneForm(
+            this,
+            "Generate Appointments For this Month",
+            [.. GenerateAppointmentTypesByMonth()]
+        ).Show();
 
     // Report generating functions
-    // private IQueryable<Tuple<string, int>>? GenerateAppointmentTypesByMonth() =>
-    //     new ClientScheduleContext()
-    //         .Appointments.GroupBy(appointment => appointment.Start.Month)
-    //         .Select(appointment => new { Month = appointment.Key, Count = appointment.Count() });
-
-    private void testfunc()
-    {
-        var items = new ClientScheduleContext()
-            .Appointments.GroupBy(appointment => appointment.Start.Month)
-            .Select(appointment => appointment.Key);
-
-    }
-
-
+    private IQueryable<Tuple<string,int>>? GenerateAppointmentTypesByMonth() =>
+         new ClientScheduleContext().Appointments.GroupBy(appointment => appointment.Start.Month)
+        .Select(appointment => new Tuple<string,int>(
+            CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(appointment.Key), 
+            appointment.Count()));
 
     private void GenReportTwoLabel_Click(object sender, EventArgs e) =>
-        new ReportForm(
+        new ReportTwoForm(
             this,
             "Schedule By Customer",
             [.. GenerateSchedule()?.SelectMany(list => list)]
@@ -224,16 +213,16 @@ public partial class HomeForm : Form
             );
 
     private void GenReportThreeLabel_Click(object sender, EventArgs e) =>
-        new ReportForm(
+        new ReportThreeForm(
             this,
             "All Customers With Appointments",
-            [.. GenerateAllCustomerWithAppointments()?.Select(x => x.ToString())]
+            [.. GenerateAllCustomerWithAppointments()]
         ).Show();
 
-    private IQueryable<bool>? GenerateAllCustomerWithAppointments() =>
+    private IQueryable<Customer>? GenerateAllCustomerWithAppointments() =>
         new ClientScheduleContext()
-            .Customers.Select(customer => customer.Appointments.Count != 0)
-            .Distinct();
+            .Customers.Where(customer => customer.Appointments.Count() != 0)
+            .Select(customer => customer);
 
     private void QuitButton_Clicked(object sender, EventArgs e) => Environment.Exit(0);
 }

@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace CompanyScheduler.Pages.Reports;
 
-public partial class ReportForm : Form
+public partial class ReportOneForm : Form
 {
     private Form prevForm;
 
-    public ReportForm(Form form, string reportName, params string[]? values)
+    public ReportOneForm(Form form, string reportName, params Tuple<string,int>[] values)
     {
         InitializeComponent();
 

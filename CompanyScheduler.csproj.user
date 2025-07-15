@@ -25,7 +25,7 @@
     <Compile Update="Pages\Customer\Update\CustomerUpdate.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Pages\Reports\ReportForm.cs">
+    <Compile Update="Pages\Reports\ReportOneForm.cs">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>

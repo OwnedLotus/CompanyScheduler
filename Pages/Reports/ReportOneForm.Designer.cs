@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CompanyScheduler.Pages.Reports;
 
-partial class ReportForm
+partial class ReportOneForm
 {
     /// <summary>
     /// Required designer variable.
