@@ -82,88 +82,99 @@ public partial class AppointmentCreateForm : Form
 
     private void SaveAppointmentButton_Clicked(object sender, EventArgs e)
     {
-        var title = titleTextBox.Text;
-        var description = descriptionTextBox.Text;
-        var location = locationTextBox.Text;
-        var contact = contactTextBox.Text;
-        var type = typeTextBox.Text;
-        var url = urlTextBox.Text;
-
-        string[] inputs = [title, description, location, contact, type, url];
-
-        var selectedDate = DateOnly.FromDateTime(datePicker.Value);
-        var selectedTime = TimeOnly.FromDateTime(timePicker.Value);
-        var selectedDateTime = new DateTime(selectedDate, selectedTime);
-        selectedDateTime = DateTime.SpecifyKind(selectedDateTime, DateTimeKind.Local);
-
-        var parsed = int.TryParse(durationPicker.Text, out int selectedDuration);
-
-        TimeZoneInfo est = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
-
-        var utcDate = TimeZoneInfo.ConvertTimeToUtc(selectedDateTime);
-
-        var estDate = DateOnly.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(utcDate, est));
-        var estTime = TimeOnly.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(utcDate, est));
-
-        string message = "Failed to Parse Appointment";
-
-        if (!parsed)
+        try
         {
-            message = "Failed to parse input from duration selector";
-            throw new FailedCustomerCreateException(message);
-        }
-        if (!Appointment.CheckTextBoxes(inputs))
-        {
-            message = "Failed to input strings into textboxes";
-            throw new FailedCustomerCreateException(message);
-        }
-        if (!ValidateTime(estTime))
-        {
-            message = "Time falls outside 9 am to 5pm EST";
-            throw new FailedAppointmentCreateException(message);
-        }
-        if (!ValidateDate(estDate))
-        {
-            message = "Date selected falls outside Monday - Friday EST";
-            throw new FailedAppointmentCreateException(message);
-        }
-        if (
-            !ValidateScheduleConflict(
-                DateOnly.FromDateTime(utcDate),
-                TimeOnly.FromDateTime(utcDate),
-                selectedDuration
+            var title = titleTextBox.Text;
+            var description = descriptionTextBox.Text;
+            var location = locationTextBox.Text;
+            var contact = contactTextBox.Text;
+            var type = typeTextBox.Text;
+            var url = urlTextBox.Text;
+
+            string[] inputs = [title, description, location, contact, type, url];
+
+            var selectedDate = DateOnly.FromDateTime(datePicker.Value);
+            var selectedTime = TimeOnly.FromDateTime(timePicker.Value);
+            var selectedDateTime = new DateTime(selectedDate, selectedTime);
+            selectedDateTime = DateTime.SpecifyKind(selectedDateTime, DateTimeKind.Local);
+
+            var parsed = int.TryParse(durationPicker.Text, out int selectedDuration);
+
+            TimeZoneInfo est = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+
+            var utcDate = TimeZoneInfo.ConvertTimeToUtc(selectedDateTime);
+
+            var estDate = DateOnly.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(utcDate, est));
+            var estTime = TimeOnly.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(utcDate, est));
+
+            string message = "Failed to Parse Appointment";
+
+            if (!parsed)
+            {
+                message = "Failed to parse input from duration selector";
+                throw new FailedCustomerCreateException(message);
+            }
+            if (!Appointment.CheckTextBoxes(inputs))
+            {
+                message = "Failed to input strings into textboxes";
+                throw new FailedCustomerCreateException(message);
+            }
+            if (!ValidateTime(estTime))
+            {
+                message = "Time falls outside 9 am to 5pm EST";
+                throw new FailedAppointmentCreateException(message);
+            }
+            if (!ValidateDate(estDate))
+            {
+                message = "Date selected falls outside Monday - Friday EST";
+                throw new FailedAppointmentCreateException(message);
+            }
+            if (
+                !ValidateScheduleConflict(
+                    DateOnly.FromDateTime(utcDate),
+                    TimeOnly.FromDateTime(utcDate),
+                    selectedDuration
+                )
             )
-        )
-        {
-            message = "Scheduled appointment conflicts with customer's available appointment";
-            throw new FailedAppointmentCreateException(message);
+            {
+                message = "Scheduled appointment conflicts with customer's available appointment";
+                throw new FailedAppointmentCreateException(message);
+            }
+
+            newAppointment.Title = title;
+            newAppointment.Description = description;
+            newAppointment.Location = location;
+            newAppointment.Contact = contact;
+            newAppointment.Type = type;
+            newAppointment.Url = url;
+            newAppointment.Start = utcDate;
+            newAppointment.End = newAppointment
+                .Start.AddMinutes(selectedDuration)
+                .ToUniversalTime();
+            newAppointment.CreateDate = DateTime.Now;
+            newAppointment.LastUpdate = DateTime.Now;
+            newAppointment.LastUpdateBy = _user.UserName;
+            newAppointment.CreatedBy = _user.UserName;
+
+            using (var context = new ClientScheduleContext())
+            {
+                newAppointment.User = context.Users.Find(_user.UserId)!;
+                newAppointment.Customer = context.Customers.Find(_user.UserId)!;
+
+                context.Appointments.Add(newAppointment);
+                context.SaveChanges();
+            }
+
+            AppointmentCreated?.Invoke(this, newAppointment);
+            previousForm.Show();
+            Close();
         }
-
-        newAppointment.Title = title;
-        newAppointment.Description = description;
-        newAppointment.Location = location;
-        newAppointment.Contact = contact;
-        newAppointment.Type = type;
-        newAppointment.Url = url;
-        newAppointment.Start = utcDate;
-        newAppointment.End = newAppointment.Start.AddMinutes(selectedDuration).ToUniversalTime();
-        newAppointment.CreateDate = DateTime.Now;
-        newAppointment.LastUpdate = DateTime.Now;
-        newAppointment.LastUpdateBy = _user.UserName;
-        newAppointment.CreatedBy = _user.UserName;
-
-        using (var context = new ClientScheduleContext())
+        catch (FailedAppointmentCreateException error)
         {
-            newAppointment.User = context.Users.Find(_user.UserId)!;
-            newAppointment.Customer = context.Customers.Find(_user.UserId)!;
-
-            context.Appointments.Add(newAppointment);
-            context.SaveChanges();
+            var message = error.ToString();
+            var caption = "Failed Creation";
+            MessageBox.Show(message, caption, MessageBoxButtons.OK);
         }
-
-        AppointmentCreated?.Invoke(this, newAppointment);
-        previousForm.Show();
-        Close();
     }
 
     private void QuitAppointmentButton_Clicked(object sender, EventArgs e)

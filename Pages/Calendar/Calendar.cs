@@ -125,60 +125,38 @@ public partial class CalendarForm : Form
 
     private void AddAppointmentButton_Clicked(object sender, EventArgs e)
     {
-        try
-        {
-            var addAppointmentForm = new AppointmentCreateForm(
-                this,
-                _currentUser,
-                _selectedCustomer
-            );
+        var addAppointmentForm = new AppointmentCreateForm(this, _currentUser, _selectedCustomer);
 
-            addAppointmentForm.AppointmentCreated += (sender, appointment) =>
-            {
-                var message = "Appointment saved successfully";
-                var caption = "Appointment Saved!";
-                MessageBox.Show(message, caption, MessageBoxButtons.OK);
-                _appointments?.Add(appointment);
-            };
-
-            addAppointmentForm.Show();
-            Hide();
-        }
-        catch (FailedCustomerCreateException error)
+        addAppointmentForm.AppointmentCreated += (sender, appointment) =>
         {
-            var message = error.ToString();
-            var caption = "Failed Creation";
+            var message = "Appointment saved successfully";
+            var caption = "Appointment Saved!";
             MessageBox.Show(message, caption, MessageBoxButtons.OK);
-        }
+            _appointments?.Add(appointment);
+        };
+
+        addAppointmentForm.Show();
+        Hide();
     }
 
     private void UpdateAppointmentButton_Clicked(object sender, EventArgs e)
     {
         if (_selectedAppointment is not null && _selectedCustomer is not null)
         {
-            try
+            var updateAppointment = new AppointmentUpdateForm(
+                this,
+                _selectedAppointment,
+                _currentUser
+            );
+            updateAppointment.AppointmentUpdated += (sender, appointments) =>
             {
-                var updateAppointment = new AppointmentUpdateForm(
-                    this,
-                    _selectedAppointment,
-                    _currentUser
-                );
-                updateAppointment.AppointmentUpdated += (sender, appointments) =>
-                {
-                    var (old, app) = appointments;
+                var (old, app) = appointments;
 
-                    _appointments?.Remove(old);
-                    _appointments?.Add(app);
-                };
-                updateAppointment.Show();
-                Hide();
-            }
-            catch (FailedAppointmentUpdateException error)
-            {
-                var message = error.ToString();
-                var caption = "Failed to Update Appointment";
-                MessageBox.Show(message, caption, MessageBoxButtons.OK);
-            }
+                _appointments?.Remove(old);
+                _appointments?.Add(app);
+            };
+            updateAppointment.Show();
+            Hide();
         }
     }
 

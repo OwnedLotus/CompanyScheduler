@@ -99,7 +99,7 @@ public partial class HomeForm : Form
         {
             if (appointmentDataGrid.AreAllCellsSelected(true))
             {
-                MessageBox.Show("Too many cells selected!", "Selected Cells");
+                MessageBox.Show("Too many cells selected!", "Selected Cells", MessageBoxButtons.OK);
             }
             else
             {
@@ -110,40 +110,32 @@ public partial class HomeForm : Form
 
     private void CreateCustomerButton_Clicked(object sender, EventArgs e)
     {
-        try
+        if (_user is null)
+            return;
+        var CreateCustomer = new CustomerCreateForm(_user, this);
+
+        CreateCustomer.CustomerCreated += (sender, customer) =>
         {
-            if (_user is null)
-                return;
-            var CreateCustomer = new CustomerCreateForm(_user, this);
+            customers.Add(customer);
+        };
 
-            CreateCustomer.CustomerCreated += (sender, customer) =>
-            {
-                customers.Add(customer);
-            };
-
-            CreateCustomer.Show();
-            Hide();
-        }
-        catch (FailedCustomerCreateException) { }
+        CreateCustomer.Show();
+        Hide();
     }
 
     private void UpdateCustomerButton_Clicked(object sender, EventArgs e)
     {
-        try
+        if (_selectedCustomer is null || _user is null)
+            return;
+
+        var UpdateCustomer = new CustomerUpdateForm(_user, _selectedCustomer, this);
+        UpdateCustomer.CustomerUpdated += (sender, customer) =>
         {
-            if (_selectedCustomer is null || _user is null)
-                return;
+            customers.Add(customer);
+        };
 
-            var UpdateCustomer = new CustomerUpdateForm(_user, _selectedCustomer, this);
-            UpdateCustomer.CustomerUpdated += (sender, customer) =>
-            {
-                customers.Add(customer);
-            };
-
-            UpdateCustomer.Show();
-            Hide();
-        }
-        catch (FailedCustomerUpdatedException) { }
+        UpdateCustomer.Show();
+        Hide();
     }
 
     private void DeleteCustomerButton_Clicked(object sender, EventArgs e)
@@ -164,7 +156,12 @@ public partial class HomeForm : Form
             customers.Remove(_selectedCustomer);
             context.SaveChanges();
         }
-        catch (FailedCustomerDeleteException) { }
+        catch (FailedCustomerDeleteException error)
+        {
+            var message = error.ToString();
+            var caption = "Failed Customer Delete";
+            MessageBox.Show(message, caption, MessageBoxButtons.OK);
+        }
     }
 
     private void AppointmentsButton_Clicked(object sender, EventArgs e)
@@ -186,43 +183,38 @@ public partial class HomeForm : Form
         new ReportOneForm(
             this,
             "Generate Appointments For this Month",
-            [.. GenerateAppointmentTypesByMonth()]
+            [.. GenerateAppointmentTypesByMonth()!]
         ).Show();
 
     // Report generating functions
-    private IQueryable<Tuple<string,int>>? GenerateAppointmentTypesByMonth() =>
-         new ClientScheduleContext().Appointments.GroupBy(appointment => appointment.Start.Month)
-        .Select(appointment => new Tuple<string,int>(
-            CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(appointment.Key), 
-            appointment.Count()));
+    private List<Tuple<string, int>>? GenerateAppointmentTypesByMonth() =>
+        [
+            .. new ClientScheduleContext()
+                .Appointments.GroupBy(appointment => appointment.Start.Month)
+                .Select(appointment => new Tuple<string, int>(
+                    CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(appointment.Key),
+                    appointment.Count()
+                )),
+        ];
 
     private void GenReportTwoLabel_Click(object sender, EventArgs e) =>
-        new ReportTwoForm(
-            this,
-            "Schedule By Customer",
-            [.. GenerateSchedule()?.SelectMany(list => list)]
-        ).Show();
+        new ReportTwoForm(this, "Schedule By Customer", [.. GenerateSchedule()!]).Show();
 
-    private IQueryable<List<string>>? GenerateSchedule() =>
-        new ClientScheduleContext()
-            .Appointments.GroupBy(appointment => appointment.User)
-            .Select(appointments =>
-                appointments
-                    .Select(x => $"Customer: {x.Customer.CustomerName} has appointment {x.Title}")
-                    .ToList()
-            );
+    private List<User>? GenerateSchedule() => [.. new ClientScheduleContext().Users];
 
     private void GenReportThreeLabel_Click(object sender, EventArgs e) =>
         new ReportThreeForm(
             this,
             "All Customers With Appointments",
-            [.. GenerateAllCustomerWithAppointments()]
+            [.. GenerateAllCustomerWithAppointments()!]
         ).Show();
 
-    private IQueryable<Customer>? GenerateAllCustomerWithAppointments() =>
-        new ClientScheduleContext()
-            .Customers.Where(customer => customer.Appointments.Count() != 0)
-            .Select(customer => customer);
+    private List<Customer>? GenerateAllCustomerWithAppointments() =>
+        [
+            .. new ClientScheduleContext()
+                .Customers.Where(customer => customer.Appointments.Count() != 0)
+                .Select(customer => customer),
+        ];
 
     private void QuitButton_Clicked(object sender, EventArgs e) => Environment.Exit(0);
 }

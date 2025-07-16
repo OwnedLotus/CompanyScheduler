@@ -1,4 +1,5 @@
 using CompanyScheduler.Models;
+using CompanyScheduler.Models.Errors;
 
 namespace CompanyScheduler.Pages.Customers;
 
@@ -18,7 +19,6 @@ public partial class CustomerUpdateForm : Form
         _customer = customer;
         _updatedCustomer = customer;
 
-        
         updateCustomerNameTextBox.Text = customer.CustomerName;
         updateAddress1TextBox.Text = customer.Address?.Address1;
         updateAddress2TextBox.Text = customer.Address?.Address2;
@@ -32,33 +32,46 @@ public partial class CustomerUpdateForm : Form
 
     private void UpdateCustomerAddButton_Click(object sender, EventArgs e)
     {
-        var customerName = updateCustomerNameTextBox.Text;
-        var customerAddress1 = updateAddress1TextBox.Text;
-        var customerAddress2 = updateAddress2TextBox.Text;
-        var customerPostal = updateAddressPostalCodeTextBox.Text;
-        var customerCityName = updateCityNameTextBox.Text;
-        var customerCountryName = updateCountryNameTextBox.Text;
-        var customerPhone = updateAddressPhoneTextBox.Text;
-
-        string[] inputs =
-        [
-            customerName,
-            customerAddress1,
-            customerAddress2,
-            customerPostal,
-            customerCityName,
-            customerCountryName
-        ];
-
-        if (Appointment.CheckTextBoxes(inputs) || Address.OnlyDigitsAndDashes(customerPhone))
+        try
         {
+            var customerName = updateCustomerNameTextBox.Text;
+            var customerAddress1 = updateAddress1TextBox.Text;
+            var customerAddress2 = updateAddress2TextBox.Text;
+            var customerPostal = updateAddressPostalCodeTextBox.Text;
+            var customerCityName = updateCityNameTextBox.Text;
+            var customerCountryName = updateCountryNameTextBox.Text;
+            var customerPhone = updateAddressPhoneTextBox.Text;
+
+            string[] inputs =
+            [
+                customerName,
+                customerAddress1,
+                customerAddress2,
+                customerPostal,
+                customerCityName,
+                customerCountryName,
+            ];
+
+            var message = "Faild to Update Customer";
+
+            if (!Appointment.CheckTextBoxes(inputs))
+            {
+                message = "Failed to parse Text boxes";
+                throw new FailedCustomerUpdatedException(message);
+            }
+            if (!Address.OnlyDigitsAndDashes(customerPhone))
+            {
+                message = "Failed to parse Digits and Dashes in Phone number";
+                throw new FailedCustomerUpdatedException(message);
+            }
+
             var country = new Country()
             {
                 Country1 = customerCountryName,
                 CreateDate = DateTime.Now,
                 CreatedBy = User.UserName,
                 LastUpdate = DateTime.Now,
-                LastUpdateBy = User.UserName
+                LastUpdateBy = User.UserName,
             };
             var city = new City()
             {
@@ -67,7 +80,7 @@ public partial class CustomerUpdateForm : Form
                 CreateDate = DateTime.Now,
                 CreatedBy = User.UserName,
                 LastUpdate = DateTime.Now,
-                LastUpdateBy = User.UserName
+                LastUpdateBy = User.UserName,
             };
             var address = new Address()
             {
@@ -99,12 +112,11 @@ public partial class CustomerUpdateForm : Form
             _mainForm.Show();
             Close();
         }
-        else
+        catch (FailedCustomerUpdatedException error)
         {
-            string message = "Failed to Update User";
+            var message = error.ToString();
             string caption = "Malformed Input";
-            MessageBoxButtons buttons = MessageBoxButtons.OK;
-            MessageBox.Show(message, caption, buttons);
+            MessageBox.Show(message, caption, MessageBoxButtons.OK);
         }
     }
 

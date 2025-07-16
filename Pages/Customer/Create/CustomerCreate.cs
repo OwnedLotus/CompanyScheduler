@@ -1,4 +1,5 @@
 using CompanyScheduler.Models;
+using CompanyScheduler.Models.Errors;
 
 namespace CompanyScheduler.Pages.Customers;
 
@@ -18,33 +19,39 @@ public partial class CustomerCreateForm : Form
 
     private void AddCustomerAddButton_Click(object sender, EventArgs e)
     {
-        var customerName = addCustomerNameTextBox.Text;
-        var customerAddress1 = addAddress1TextBox.Text;
-        var customerAddress2 = addAddress2TextBox.Text;
-        var customerPostal = addAddressPostalCodeTextBox.Text;
-        var customerCityName = addCityNameTextBox.Text;
-        var customerCountryName = addCountryNameTextBox.Text;
-        var customerPhone = addAddressPhoneTextBox.Text;
-
-        string[] inputs =
-        [
-            customerName,
-            customerAddress1,
-            customerAddress2,
-            customerPostal,
-            customerCityName,
-            customerCountryName,
-        ];
-
-        if (!Appointment.CheckTextBoxes(inputs) || !Address.OnlyDigitsAndDashes(customerPhone))
+        try
         {
+            var customerName = addCustomerNameTextBox.Text;
+            var customerAddress1 = addAddress1TextBox.Text;
+            var customerAddress2 = addAddress2TextBox.Text;
+            var customerPostal = addAddressPostalCodeTextBox.Text;
+            var customerCityName = addCityNameTextBox.Text;
+            var customerCountryName = addCountryNameTextBox.Text;
+            var customerPhone = addAddressPhoneTextBox.Text;
+
+            string[] inputs =
+            [
+                customerName,
+                customerAddress1,
+                customerAddress2,
+                customerPostal,
+                customerCityName,
+                customerCountryName,
+            ];
+
             string message = "Failed to Create Customer";
-            string caption = "Malformed Input";
-            MessageBoxButtons messageBoxButtons = MessageBoxButtons.OK;
-            MessageBox.Show(message, caption, messageBoxButtons);
-        }
-        else
-        {
+
+            if (!Appointment.CheckTextBoxes(inputs))
+            {
+                message = "Failed to Parse text boxes";
+                throw new FailedCustomerCreateException(message);
+            }
+            if (!Address.OnlyDigitsAndDashes(customerPhone))
+            {
+                message = "Failed to Parse Digits and Dashes in program";
+                throw new FailedCustomerCreateException(message);
+            }
+
             var country = new Country()
             {
                 Country1 = customerCountryName,
@@ -91,6 +98,12 @@ public partial class CustomerCreateForm : Form
             CustomerCreated?.Invoke(this, Customer);
             _mainForm.Show();
             Close();
+        }
+        catch (FailedCustomerCreateException error)
+        {
+            var message = error.ToString();
+            var caption = "Failed Customer Create";
+            MessageBox.Show(message, caption, MessageBoxButtons.OK);
         }
     }
 

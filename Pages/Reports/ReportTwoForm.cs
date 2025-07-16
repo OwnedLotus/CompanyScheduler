@@ -3,21 +3,41 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CompanyScheduler.Models;
 
 namespace CompanyScheduler.Pages.Reports;
 
 public partial class ReportTwoForm : Form
 {
     private Form prevForm;
+    private User? selectedUser;
 
-    public ReportTwoForm(Form form, string reportName, params string[] values)
+    public ReportTwoForm(Form form, string reportName, User[] users)
     {
         InitializeComponent();
 
         prevForm = form;
 
         reportsLabel.Text = reportName;
-        reportGridView.DataSource = values;
+        userGridView.DataSource = users;
+    }
+
+    private void userGridView_SelectionChanged(object sender, EventArgs e)
+    {
+        Int32 selectedCellCount = userGridView.GetCellCount(DataGridViewElementStates.Selected);
+
+        if (selectedCellCount > 0)
+        {
+            if (userGridView.AreAllCellsSelected(true))
+            {
+                MessageBox.Show("Too many cells selected!", "Selected Cells", MessageBoxButtons.OK);
+            }
+            else
+            {
+                selectedUser = userGridView.SelectedCells[0].Value as User;
+                userAppointmentsGridView.DataSource = selectedUser?.Appointments;
+            }
+        }
     }
 
     private void OkButton_Click(object sender, EventArgs e)
