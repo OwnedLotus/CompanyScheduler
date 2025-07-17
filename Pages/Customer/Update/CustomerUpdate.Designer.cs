@@ -140,15 +140,15 @@ partial class CustomerUpdateForm
 
         updateCustomerAddButton = new()
         {
-            Name = "addCustomerAddButton",
-            Text = "Add Customer",
+            Name = "updateCustomerAddButton",
+            Text = "Update Customer",
             Location = new Point(600, 80)
         };
         updateCustomerAddButton.Click += UpdateCustomerAddButton_Click;
 
         updateCustomerQuitButton = new()
         {
-            Name = "addCustomerQuitButton",
+            Name = "updateCustomerQuitButton",
             Text = "Quit",
             Location = new Point(600, 240)
         };

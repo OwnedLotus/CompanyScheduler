@@ -7,7 +7,6 @@ using CompanyScheduler.Pages.Calendar;
 using CompanyScheduler.Pages.Customers;
 using CompanyScheduler.Pages.Reports;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Win32;
 
 namespace CompanyScheduler.Pages;
 
@@ -22,6 +21,8 @@ public partial class HomeForm : Form
     private BindingList<Customer> customers = new();
     private Appointment? _selectedAppointment;
     private Customer? _selectedCustomer;
+    private RegionInfo currentRegion = RegionInfo.CurrentRegion;
+    private System.Windows.Forms.Timer _timer;
 
     private User? _user;
 
@@ -32,15 +33,22 @@ public partial class HomeForm : Form
         CheckSoonAppointments(15);
         _user = user;
 
+        _timer = new();
+        _timer.Interval = 1000;
+        _timer.Tick += _timer_Tick;
+        _timer.Start();
+
         customerDataGrid.DataSource = customers;
         appointmentDataGrid.DataSource = appointments;
-
-        SystemEvents.UserPreferenceChanged += PrefereceChanged;
     }
 
-    private void PrefereceChanged(object sender, UserPreferenceChangedEventArgs e)
+    private void _timer_Tick(object? sender, EventArgs e)
     {
-        LoadData();
+        if (currentRegion != RegionInfo.CurrentRegion)
+        {
+            LoadData();
+            currentRegion = RegionInfo.CurrentRegion;
+        }
     }
 
     private void LoadData()
@@ -123,10 +131,13 @@ public partial class HomeForm : Form
             return;
         var CreateCustomer = new CustomerCreateForm(_user, this);
 
+        _timer.Stop();
+
         CreateCustomer.CustomerCreated += (sender, customer) =>
         {
             customers.Add(customer);
             customers.ResetBindings();
+            _timer.Start();
         };
 
         CreateCustomer.Show();
@@ -138,11 +149,14 @@ public partial class HomeForm : Form
         if (_selectedCustomer is null || _user is null)
             return;
 
+        _timer.Stop();
+
         var UpdateCustomer = new CustomerUpdateForm(_user, _selectedCustomer, this);
         UpdateCustomer.CustomerUpdated += (sender, customer) =>
         {
             customers.Add(customer);
             customers.ResetBindings();
+            _timer.Start();
         };
 
         UpdateCustomer.Show();
@@ -181,10 +195,12 @@ public partial class HomeForm : Form
             return;
         var calForm = new CalendarForm(this, calendar, _user);
         calForm.Show();
+        _timer.Stop();
 
         calForm.ScheduleUpdated += (sender, cal) =>
         {
             LoadData();
+            _timer.Start();
         };
 
         Hide();

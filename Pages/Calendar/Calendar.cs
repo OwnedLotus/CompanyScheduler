@@ -29,12 +29,20 @@ public partial class CalendarForm : Form
     Customer _selectedCustomer = new();
     Appointment _selectedAppointment = new();
 
+    private System.Windows.Forms.Timer _timer;
+    private RegionInfo currentRegion = RegionInfo.CurrentRegion;
+
     // todo enable selection of customer
 
     public CalendarForm(Form homeForm, GregorianCalendar cal, User user)
     {
         InitializeComponent();
         LoadData();
+
+        _timer = new();
+        _timer.Interval = 1000;
+        _timer.Tick += _timer_Tick;
+        _timer.Start();
 
         _homeForm = homeForm;
         customerDataGrid.DataSource = _customers;
@@ -43,6 +51,15 @@ public partial class CalendarForm : Form
         _currentUser = user;
 
         SystemEvents.UserPreferenceChanged += PreferenceChanged;
+    }
+
+    private void _timer_Tick(object? sender, EventArgs e)
+    {
+        if(currentRegion != RegionInfo.CurrentRegion)
+        {
+            LoadData();
+            currentRegion = RegionInfo.CurrentRegion;
+        }
     }
 
     private void PreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
@@ -57,12 +74,20 @@ public partial class CalendarForm : Form
         if (selectedDate is not null)
             using (var context = new ClientScheduleContext())
             {
-                _appointments =
-                [
-                    .. context.Appointments.Where(apt =>
-                        DateOnly.FromDateTime(apt.Start.ToUniversalTime()) == selectedDate
-                    ),
-                ];
+                var daysAppointments = context.Appointments.Where(apt =>
+                                        DateOnly.FromDateTime(apt.Start) == selectedDate.Value).ToList();
+
+                if (daysAppointments.Count != 0)
+                    _appointments =
+                    [
+                        .. context.Appointments.Where(apt =>
+                            DateOnly.FromDateTime(apt.Start) == selectedDate.Value
+                        ),
+                    ];
+                else
+                    _appointments = [];
+
+                _appointments.ResetBindings();
             }
 
         appointmentDataGrid.DataSource = _appointments;
@@ -134,6 +159,8 @@ public partial class CalendarForm : Form
     {
         var addAppointmentForm = new AppointmentCreateForm(this, _currentUser, _selectedCustomer);
 
+        _timer.Stop();
+
         addAppointmentForm.AppointmentCreated += (sender, appointment) =>
         {
             var message = "Appointment saved successfully";
@@ -141,6 +168,7 @@ public partial class CalendarForm : Form
             MessageBox.Show(message, caption, MessageBoxButtons.OK);
             _appointments?.Add(appointment);
             _appointments?.ResetBindings();
+            _timer.Start();
         };
 
         addAppointmentForm.Show();
@@ -149,6 +177,8 @@ public partial class CalendarForm : Form
 
     private void UpdateAppointmentButton_Clicked(object sender, EventArgs e)
     {
+        _timer.Stop();
+
         if (_selectedAppointment is not null && _selectedCustomer is not null)
         {
             var updateAppointment = new AppointmentUpdateForm(
@@ -163,6 +193,7 @@ public partial class CalendarForm : Form
                 _appointments?.Remove(old);
                 _appointments?.Add(app);
                 _appointments?.ResetBindings();
+                _timer.Start();
             };
             updateAppointment.Show();
             Hide();

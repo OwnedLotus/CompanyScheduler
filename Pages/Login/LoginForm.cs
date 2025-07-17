@@ -1,6 +1,5 @@
 using System.Globalization;
 using CompanyScheduler.Models;
-using Microsoft.Win32;
 
 namespace CompanyScheduler.Pages.Login;
 
@@ -36,11 +35,19 @@ public partial class LoginForm : Form
 
     int selection = 0;
 
+    private RegionInfo currentRegion = RegionInfo.CurrentRegion;
+    private System.Windows.Forms.Timer _timer;
+
     public string LabelText { get; private set; } = RegionInfo.CurrentRegion.DisplayName;
 
     public LoginForm()
     {
         InitializeComponent();
+
+        _timer = new System.Windows.Forms.Timer();
+        _timer.Interval = 1000;
+        _timer.Tick += _timer_Tick;
+        _timer.Start();
 
         if (
             RegionInfo.CurrentRegion.TwoLetterISORegionName.Equals(
@@ -53,16 +60,15 @@ public partial class LoginForm : Form
         }
         selectionBox.SelectedIndex = selection;
 
-        SystemEvents.UserPreferenceChanged += PreferenceChanged;
     }
 
-    private void PreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
+    private void _timer_Tick(object? sender, EventArgs e)
     {
         if (
-            RegionInfo.CurrentRegion.TwoLetterISORegionName.Equals(
-                "JP",
-                StringComparison.OrdinalIgnoreCase
-            )
+           RegionInfo.CurrentRegion.TwoLetterISORegionName.Equals(
+               "JP",
+               StringComparison.OrdinalIgnoreCase
+           )
         )
         {
             selectionBox.SelectedIndex = 1;
@@ -71,6 +77,7 @@ public partial class LoginForm : Form
         {
             selectionBox.SelectedIndex = 0;
         }
+
         LanguagesSelector_SelectionChanged(null, EventArgs.Empty);
     }
 
@@ -90,6 +97,7 @@ public partial class LoginForm : Form
             var home = new HomeForm(user);
             home.Show();
             Hide();
+            _timer.Dispose();
         }
         else
         {

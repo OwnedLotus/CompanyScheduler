@@ -7,7 +7,6 @@ public partial class CustomerUpdateForm : Form
 {
     public event EventHandler<Customer>? CustomerUpdated;
     private Customer _customer;
-    private Customer _updatedCustomer;
     public User User { get; private set; }
     private readonly Form _mainForm;
 
@@ -17,7 +16,6 @@ public partial class CustomerUpdateForm : Form
         User = user;
         _mainForm = mainForm;
         _customer = customer;
-        _updatedCustomer = customer;
 
         updateCustomerNameTextBox.Text = customer.CustomerName;
         updateAddress1TextBox.Text = customer.Address?.Address1;
@@ -95,20 +93,19 @@ public partial class CustomerUpdateForm : Form
                 LastUpdateBy = User.UserName,
             };
 
-            _updatedCustomer.CustomerName = customerName;
-            _updatedCustomer.Address = address;
-            _updatedCustomer.Active = true;
-            _updatedCustomer.LastUpdate = DateTime.Now;
-            _updatedCustomer.LastUpdateBy = User.UserName;
+            _customer.CustomerName = customerName;
+            _customer.Address = address;
+            _customer.Active = true;
+            _customer.LastUpdate = DateTime.Now;
+            _customer.LastUpdateBy = User.UserName;
 
             using (var context = new ClientScheduleContext())
             {
-                context.Customers.Remove(_customer);
-                context.Customers.Add(_updatedCustomer);
+                context.Customers.Update(_customer);
                 context.SaveChanges();
             }
 
-            CustomerUpdated?.Invoke(this, _updatedCustomer);
+            CustomerUpdated?.Invoke(this, _customer);
             _mainForm.Show();
             Close();
         }
