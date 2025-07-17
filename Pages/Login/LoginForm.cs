@@ -1,5 +1,6 @@
 using System.Globalization;
 using CompanyScheduler.Models;
+using Microsoft.Win32;
 
 namespace CompanyScheduler.Pages.Login;
 
@@ -51,6 +52,26 @@ public partial class LoginForm : Form
             selection = 1;
         }
         selectionBox.SelectedIndex = selection;
+
+        SystemEvents.UserPreferenceChanged += PreferenceChanged;
+    }
+
+    private void PreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
+    {
+        if (
+            RegionInfo.CurrentRegion.TwoLetterISORegionName.Equals(
+                "JP",
+                StringComparison.OrdinalIgnoreCase
+            )
+        )
+        {
+            selectionBox.SelectedIndex = 1;
+        }
+        else
+        {
+            selectionBox.SelectedIndex = 0;
+        }
+        LanguagesSelector_SelectionChanged(null, EventArgs.Empty);
     }
 
     private void LoginButton_Clicked(object sender, EventArgs e)
@@ -79,7 +100,7 @@ public partial class LoginForm : Form
         }
     }
 
-    public void LanguagesSelector_SelectionChanged(object sender, EventArgs e)
+    public void LanguagesSelector_SelectionChanged(object? sender, EventArgs e)
     {
         selection = selectionBox.SelectedIndex;
 
@@ -111,7 +132,7 @@ public partial class LoginForm : Form
     public void UpdateLoginLog(string username)
     {
         using StreamWriter sw = new(filePath, append: true);
-        sw.WriteLine($"{DateTime.UtcNow}: {userBox.Text}");
+        sw.WriteLine($"{DateTime.Now}: {userBox.Text}");
     }
 
     private void QuitButton_Clicked(object sender, EventArgs e) => Environment.Exit(0);
@@ -120,5 +141,5 @@ public partial class LoginForm : Form
 public enum LoginLanguage
 {
     English,
-    Japanese
+    Japanese,
 }

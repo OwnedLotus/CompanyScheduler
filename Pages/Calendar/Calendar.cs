@@ -4,6 +4,7 @@ using CompanyScheduler.Models;
 using CompanyScheduler.Models.Errors;
 using CompanyScheduler.Pages.Calendar.Appointments;
 using CompanyScheduler.Pages.Calendar.Appointments.Show;
+using Microsoft.Win32;
 
 namespace CompanyScheduler.Pages.Calendar;
 
@@ -40,6 +41,13 @@ public partial class CalendarForm : Form
         appointmentDataGrid.DataSource = _appointments;
         calendar = cal;
         _currentUser = user;
+
+        SystemEvents.UserPreferenceChanged += PreferenceChanged;
+    }
+
+    private void PreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
+    {
+        LoadData();
     }
 
     private void DatePicker_ValueChanged(object sender, EventArgs e)
@@ -71,17 +79,16 @@ public partial class CalendarForm : Form
 
     private void LoadData()
     {
+        if (_customers.Count == 0 || _appointments.Count == 0)
+        {
+            _customers.Clear();
+            _appointments.Clear();
+        }
+
         using var context = new ClientScheduleContext();
 
-        foreach (var customer in context.Customers)
-        {
-            _customers.Add(customer);
-        }
-
-        foreach (var appointment in context.Appointments)
-        {
-            _appointments.Add(appointment);
-        }
+        _customers = [.. context.Customers];
+        _appointments = [.. context.Appointments];
     }
 
     private void AppointmentDataGrid_SelectionChanged(object sender, EventArgs e)
@@ -133,6 +140,7 @@ public partial class CalendarForm : Form
             var caption = "Appointment Saved!";
             MessageBox.Show(message, caption, MessageBoxButtons.OK);
             _appointments?.Add(appointment);
+            _appointments?.ResetBindings();
         };
 
         addAppointmentForm.Show();
@@ -154,6 +162,7 @@ public partial class CalendarForm : Form
 
                 _appointments?.Remove(old);
                 _appointments?.Add(app);
+                _appointments?.ResetBindings();
             };
             updateAppointment.Show();
             Hide();
@@ -173,6 +182,7 @@ public partial class CalendarForm : Form
             {
                 context.Appointments.Remove(_selectedAppointment);
                 _appointments.Remove(_selectedAppointment);
+                _appointments.ResetBindings();
                 context.SaveChanges();
             }
             else

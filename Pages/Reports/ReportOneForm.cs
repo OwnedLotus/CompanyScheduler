@@ -10,7 +10,7 @@ public partial class ReportOneForm : Form
 {
     private Form prevForm;
 
-    public ReportOneForm(Form form, string reportName, params Tuple<string,int>[] values)
+    public ReportOneForm(Form form, string reportName, params Tuple<string, string, int>[] values)
     {
         InitializeComponent();
 

@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel;
 using System.Globalization;
+using System.Threading;
 using CompanyScheduler.Models;
 using CompanyScheduler.Models.Errors;
 using CompanyScheduler.Pages.Calendar;
 using CompanyScheduler.Pages.Customers;
 using CompanyScheduler.Pages.Reports;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Win32;
 
 namespace CompanyScheduler.Pages;
 
@@ -32,6 +34,13 @@ public partial class HomeForm : Form
 
         customerDataGrid.DataSource = customers;
         appointmentDataGrid.DataSource = appointments;
+
+        SystemEvents.UserPreferenceChanged += PrefereceChanged;
+    }
+
+    private void PrefereceChanged(object sender, UserPreferenceChangedEventArgs e)
+    {
+        LoadData();
     }
 
     private void LoadData()
@@ -117,6 +126,7 @@ public partial class HomeForm : Form
         CreateCustomer.CustomerCreated += (sender, customer) =>
         {
             customers.Add(customer);
+            customers.ResetBindings();
         };
 
         CreateCustomer.Show();
@@ -132,6 +142,7 @@ public partial class HomeForm : Form
         UpdateCustomer.CustomerUpdated += (sender, customer) =>
         {
             customers.Add(customer);
+            customers.ResetBindings();
         };
 
         UpdateCustomer.Show();
@@ -187,12 +198,17 @@ public partial class HomeForm : Form
         ).Show();
 
     // Report generating functions
-    private List<Tuple<string, int>>? GenerateAppointmentTypesByMonth() =>
+    private List<Tuple<string, string, int>>? GenerateAppointmentTypesByMonth() =>
         [
             .. new ClientScheduleContext()
-                .Appointments.GroupBy(appointment => appointment.Start.Month)
-                .Select(appointment => new Tuple<string, int>(
-                    CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(appointment.Key),
+                .Appointments.GroupBy(appointment => new
+                {
+                    appointment.Start.Month,
+                    appointment.Type,
+                })
+                .Select(appointment => new Tuple<string, string, int>(
+                    CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(appointment.Key.Month),
+                    appointment.Key.Type,
                     appointment.Count()
                 )),
         ];
