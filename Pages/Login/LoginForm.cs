@@ -35,7 +35,7 @@ public partial class LoginForm : Form
 
     int selection = 0;
 
-    private RegionInfo currentRegion = RegionInfo.CurrentRegion;
+    private CultureInfo currentCulture = CultureInfo.CurrentCulture;
     private System.Windows.Forms.Timer _timer;
 
     public string LabelText { get; private set; } = RegionInfo.CurrentRegion.DisplayName;
@@ -64,18 +64,12 @@ public partial class LoginForm : Form
 
     private void _timer_Tick(object? sender, EventArgs e)
     {
-        if (
-           RegionInfo.CurrentRegion.TwoLetterISORegionName.Equals(
-               "JP",
-               StringComparison.OrdinalIgnoreCase
-           )
-        )
+        CultureInfo.CurrentCulture.ClearCachedData();
+
+        if (currentCulture != CultureInfo.CurrentCulture)
         {
-            selectionBox.SelectedIndex = 1;
-        }
-        else
-        {
-            selectionBox.SelectedIndex = 0;
+            currentCulture = CultureInfo.CurrentCulture;
+            selectionBox.SelectedIndex = selectionBox.SelectedIndex == 0 ? 1 : 0;
         }
 
         LanguagesSelector_SelectionChanged(null, EventArgs.Empty);

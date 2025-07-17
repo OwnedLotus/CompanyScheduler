@@ -21,7 +21,7 @@ public partial class HomeForm : Form
     private BindingList<Customer> customers = new();
     private Appointment? _selectedAppointment;
     private Customer? _selectedCustomer;
-    private RegionInfo currentRegion = RegionInfo.CurrentRegion;
+    private CultureInfo currentCulture = CultureInfo.CurrentCulture;
     private System.Windows.Forms.Timer _timer;
 
     private User? _user;
@@ -44,10 +44,12 @@ public partial class HomeForm : Form
 
     private void _timer_Tick(object? sender, EventArgs e)
     {
-        if (currentRegion != RegionInfo.CurrentRegion)
+        CultureInfo.CurrentCulture.ClearCachedData();
+
+        if (currentCulture != CultureInfo.CurrentCulture)
         {
             LoadData();
-            currentRegion = RegionInfo.CurrentRegion;
+            currentCulture = CultureInfo.CurrentCulture;
         }
     }
 
@@ -55,15 +57,8 @@ public partial class HomeForm : Form
     {
         using var context = new ClientScheduleContext();
 
-        foreach (var customer in context.Customers)
-        {
-            customers.Add(customer);
-        }
-
-        foreach (var appointment in context.Appointments)
-        {
-            appointments.Add(appointment);
-        }
+        customers = [.. context.Customers];
+        appointments = [.. context.Appointments];
     }
 
     private void CheckSoonAppointments(int span)

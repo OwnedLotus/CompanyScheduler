@@ -55,6 +55,8 @@ public partial class CalendarForm : Form
 
     private void _timer_Tick(object? sender, EventArgs e)
     {
+        CultureInfo.CurrentCulture.ClearCachedData();
+
         if(currentRegion != RegionInfo.CurrentRegion)
         {
             LoadData();
