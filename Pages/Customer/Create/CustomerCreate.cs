@@ -21,13 +21,13 @@ public partial class CustomerCreateForm : Form
     {
         try
         {
-            var customerName = addCustomerNameTextBox.Text;
-            var customerAddress1 = addAddress1TextBox.Text;
-            var customerAddress2 = addAddress2TextBox.Text;
-            var customerPostal = addAddressPostalCodeTextBox.Text;
-            var customerCityName = addCityNameTextBox.Text;
-            var customerCountryName = addCountryNameTextBox.Text;
-            var customerPhone = addAddressPhoneTextBox.Text;
+            var customerName = addCustomerNameTextBox.Text.Trim();
+            var customerAddress1 = addAddress1TextBox.Text.Trim();
+            var customerAddress2 = addAddress2TextBox.Text.Trim();
+            var customerPostal = addAddressPostalCodeTextBox.Text.Trim();
+            var customerCityName = addCityNameTextBox.Text.Trim();
+            var customerCountryName = addCountryNameTextBox.Text.Trim();
+            var customerPhone = addAddressPhoneTextBox.Text.Trim();
 
             string[] inputs =
             [

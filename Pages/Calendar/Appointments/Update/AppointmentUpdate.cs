@@ -103,12 +103,12 @@ public partial class AppointmentUpdateForm : Form
     {
         try
         {
-            var title = titleTextBox.Text;
-            var description = descriptionTextBox.Text;
-            var location = locationTextBox.Text;
-            var contact = contactTextBox.Text;
-            var type = typeTextBox.Text;
-            var url = urlTextBox.Text;
+            var title = titleTextBox.Text.Trim();
+            var description = descriptionTextBox.Text.Trim();
+            var location = locationTextBox.Text.Trim();
+            var contact = contactTextBox.Text.Trim();
+            var type = typeTextBox.Text.Trim();
+            var url = urlTextBox.Text.Trim();
 
             string[] inputs = [title, description, location, contact, type, url];
 
@@ -117,7 +117,7 @@ public partial class AppointmentUpdateForm : Form
             var selectedDateTime = new DateTime(selectedDate, selectedTime);
             selectedDateTime = DateTime.SpecifyKind(selectedDateTime, DateTimeKind.Local);
 
-            var parsed = int.TryParse(durationPicker.Text, out int selectedDuration);
+            var parsed = int.TryParse(durationPicker.Text.Trim(), out int selectedDuration);
 
             TimeZoneInfo est = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard time");
 

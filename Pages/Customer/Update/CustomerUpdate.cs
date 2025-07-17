@@ -32,13 +32,13 @@ public partial class CustomerUpdateForm : Form
     {
         try
         {
-            var customerName = updateCustomerNameTextBox.Text;
-            var customerAddress1 = updateAddress1TextBox.Text;
-            var customerAddress2 = updateAddress2TextBox.Text;
-            var customerPostal = updateAddressPostalCodeTextBox.Text;
-            var customerCityName = updateCityNameTextBox.Text;
-            var customerCountryName = updateCountryNameTextBox.Text;
-            var customerPhone = updateAddressPhoneTextBox.Text;
+            var customerName = updateCustomerNameTextBox.Text.Trim();
+            var customerAddress1 = updateAddress1TextBox.Text.Trim();
+            var customerAddress2 = updateAddress2TextBox.Text.Trim();
+            var customerPostal = updateAddressPostalCodeTextBox.Text.Trim();
+            var customerCityName = updateCityNameTextBox.Text.Trim();
+            var customerCountryName = updateCountryNameTextBox.Text.Trim();
+            var customerPhone = updateAddressPhoneTextBox.Text.Trim();
 
             string[] inputs =
             [

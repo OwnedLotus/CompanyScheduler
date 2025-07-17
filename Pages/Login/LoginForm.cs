@@ -44,8 +44,10 @@ public partial class LoginForm : Form
     {
         InitializeComponent();
 
-        _timer = new System.Windows.Forms.Timer();
-        _timer.Interval = 1000;
+        _timer = new System.Windows.Forms.Timer
+        {
+            Interval = 1000
+        };
         _timer.Tick += _timer_Tick;
         _timer.Start();
 
@@ -66,7 +68,7 @@ public partial class LoginForm : Form
     {
         CultureInfo.CurrentCulture.ClearCachedData();
 
-        if (currentCulture != CultureInfo.CurrentCulture)
+        if (!currentCulture.Equals( CultureInfo.CurrentCulture))
         {
             currentCulture = CultureInfo.CurrentCulture;
             selectionBox.SelectedIndex = selectionBox.SelectedIndex == 0 ? 1 : 0;
