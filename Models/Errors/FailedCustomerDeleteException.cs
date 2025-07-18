@@ -3,24 +3,28 @@ namespace CompanyScheduler.Models.Errors;
 class FailedCustomerDeleteException : Exception
 {
     public int ErrorCode { get; }
+    private string ErrorMessage { get; }
 
-    public FailedCustomerDeleteException()
-        : base("Failed to Delete Customer.") { }
 
     public FailedCustomerDeleteException(string message)
-        : base(message) { }
+        : base(message) {
+        ErrorMessage = message;
+    }
 
     public FailedCustomerDeleteException(string message, Exception e)
-        : base(message, e) { }
+        : base(message, e) {
+        ErrorMessage = message;
+    }
 
     public FailedCustomerDeleteException(string message, int code)
         : base(message)
     {
+        ErrorMessage = message;
         ErrorCode = code;
     }
 
     public override string ToString()
     {
-        return $"{base.ToString()}, ErrorCode: {ErrorCode}";
+        return $"{ErrorMessage}, ErrorCode: {ErrorCode}";
     }
 }

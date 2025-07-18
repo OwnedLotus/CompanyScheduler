@@ -3,24 +3,29 @@ namespace CompanyScheduler.Models.Errors;
 class FailedCustomerUpdatedException : Exception
 {
     public int ErrorCode { get; }
-
-    public FailedCustomerUpdatedException()
-        : base("Failed to Update Customer.") { }
+    private string ErrorMessage { get; }
 
     public FailedCustomerUpdatedException(string message)
-        : base(message) { }
+        : base(message) {
+        ErrorMessage = message;
+
+    }
 
     public FailedCustomerUpdatedException(string message, Exception e)
-        : base(message, e) { }
+        : base(message, e) {
+        ErrorMessage = message;
+    }
 
     public FailedCustomerUpdatedException(string message, int code)
         : base(message)
     {
         ErrorCode = code;
+        ErrorMessage = message;
+
     }
 
     public override string ToString()
     {
-        return $"{base.ToString()}, ErrorCode: {ErrorCode}";
+        return $"{ErrorMessage}, ErrorCode: {ErrorCode}";
     }
 }
