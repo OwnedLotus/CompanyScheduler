@@ -12,7 +12,7 @@ public partial class ReportTwoForm : Form
     private Form prevForm;
     private User? selectedUser;
 
-    public ReportTwoForm(Form form, string reportName, User[] users)
+    public ReportTwoForm(Form form, string reportName, Tuple<string, Appointment[]>[] users)
     {
         InitializeComponent();
 
@@ -28,15 +28,8 @@ public partial class ReportTwoForm : Form
 
         if (selectedCellCount > 0)
         {
-            if (userGridView.AreAllCellsSelected(true))
-            {
-                MessageBox.Show("Too many cells selected!", "Selected Cells", MessageBoxButtons.OK);
-            }
-            else
-            {
                 selectedUser = userGridView.SelectedCells[0].Value as User;
                 userAppointmentsGridView.DataSource = selectedUser?.Appointments;
-            }
         }
     }
 

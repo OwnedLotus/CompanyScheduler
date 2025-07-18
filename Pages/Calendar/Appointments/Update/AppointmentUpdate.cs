@@ -11,7 +11,7 @@ public partial class AppointmentUpdateForm : Form
     private Appointment _appointment;
     private Appointment updatedAppointment;
     private readonly Form previousForm;
-    private readonly Customer? _customer;
+    private readonly Customer _customer;
     private User? _user;
 
     public AppointmentUpdateForm(Form prevForm, Appointment appointment, User user)
@@ -81,15 +81,15 @@ public partial class AppointmentUpdateForm : Form
         using var context = new ClientScheduleContext();
         var appointments = context
             .Appointments.Include(a => a.Customer)
-            .Where(a => a.CustomerId == _customer!.CustomerId);
+            .Where(a => a.Customer.CustomerId == _customer.CustomerId);
 
         foreach (var appointment in allAppointments)
         {
             if (appointment.AppointmentId == _appointment.AppointmentId)
                 continue;
 
-            var intersect1 = appointment.Start <= start && appointment.End <= end;
-            var intersect2 = start <= appointment.Start && end <= appointment.End;
+            var intersect1 = appointment.Start <= start && appointment.End <= end && start <= appointment.End;
+            var intersect2 = start <= appointment.Start && end <= appointment.End && appointment.Start <= end;
             var intersect3 = start <= appointment.Start && appointment.End <= end;
             var intersect4 = appointment.Start <= start && end <= appointment.End;
 

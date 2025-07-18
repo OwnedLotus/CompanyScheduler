@@ -30,7 +30,7 @@ public partial class CalendarForm : Form
     Appointment _selectedAppointment = new();
 
     private System.Windows.Forms.Timer _timer;
-    private RegionInfo currentRegion = RegionInfo.CurrentRegion;
+    private TimeZoneInfo currentTimeZone = TimeZoneInfo.Local;
 
     // todo enable selection of customer
 
@@ -40,7 +40,7 @@ public partial class CalendarForm : Form
         LoadData();
 
         _timer = new();
-        _timer.Interval = 1000;
+        _timer.Interval = 500;
         _timer.Tick += _timer_Tick;
         _timer.Start();
 
@@ -55,12 +55,12 @@ public partial class CalendarForm : Form
 
     private void _timer_Tick(object? sender, EventArgs e)
     {
-        CultureInfo.CurrentCulture.ClearCachedData();
+        TimeZoneInfo.ClearCachedData();
 
-        if(currentRegion != RegionInfo.CurrentRegion)
+        if(!currentTimeZone.Equals(TimeZoneInfo.Local))
         {
             LoadData();
-            currentRegion = RegionInfo.CurrentRegion;
+            currentTimeZone = TimeZoneInfo.Local;
         }
     }
 
@@ -159,6 +159,13 @@ public partial class CalendarForm : Form
 
     private void AddAppointmentButton_Clicked(object sender, EventArgs e)
     {
+        if(_selectedCustomer is null)
+        {
+            MessageBox.Show("Please Select Customer", "No Customer", MessageBoxButtons.OK);
+            return;
+        }
+
+
         var addAppointmentForm = new AppointmentCreateForm(this, _currentUser, _selectedCustomer);
 
         _timer.Stop();

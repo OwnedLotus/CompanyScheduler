@@ -21,7 +21,7 @@ public partial class HomeForm : Form
     private BindingList<Customer> customers = new();
     private Appointment? _selectedAppointment;
     private Customer? _selectedCustomer;
-    private CultureInfo currentCulture = CultureInfo.CurrentCulture;
+    private TimeZoneInfo currentTimeZone = TimeZoneInfo.Local;
     private System.Windows.Forms.Timer _timer;
 
     private User? _user;
@@ -34,7 +34,7 @@ public partial class HomeForm : Form
         _user = user;
 
         _timer = new();
-        _timer.Interval = 1000;
+        _timer.Interval = 500;
         _timer.Tick += _timer_Tick;
         _timer.Start();
 
@@ -44,12 +44,12 @@ public partial class HomeForm : Form
 
     private void _timer_Tick(object? sender, EventArgs e)
     {
-        CultureInfo.CurrentCulture.ClearCachedData();
+        TimeZoneInfo.ClearCachedData();
 
-        if (currentCulture != CultureInfo.CurrentCulture)
+        if (!currentTimeZone.Equals(TimeZoneInfo.Local))
         {
             LoadData();
-            currentCulture = CultureInfo.CurrentCulture;
+            currentTimeZone = TimeZoneInfo.Local;
         }
     }
 
@@ -57,8 +57,8 @@ public partial class HomeForm : Form
     {
         using var context = new ClientScheduleContext();
 
-        customers = [.. context.Customers];
-        appointments = [.. context.Appointments];
+        customers = [.. context.Customers.Include(c => c.Address).ThenInclude(a => a.City).ThenInclude(c => c.Country)];
+        appointments = [.. context.Appointments.Include(a => a.Customer).ThenInclude(c => c.Address).ThenInclude(a => a.City).ThenInclude(c => c.Country)];
     }
 
     private void CheckSoonAppointments(int span)
@@ -85,18 +85,11 @@ public partial class HomeForm : Form
 
         if (selectedCellCount > 0)
         {
-            if (customerDataGrid.AreAllCellsSelected(true))
-            {
-                MessageBox.Show("Too many cells selected!", "Selected Cells");
-            }
-            else
-            {
-                var selectedRow = customerDataGrid.SelectedRows;
+            var selectedRow = customerDataGrid.SelectedRows;
 
-                if (selectedRow.Count > 0)
-                {
-                    _selectedCustomer = selectedRow[0].DataBoundItem as Customer;
-                }
+            if (selectedRow.Count > 0)
+            {
+                _selectedCustomer = selectedRow[0].DataBoundItem as Customer;
             }
         }
     }
@@ -109,14 +102,7 @@ public partial class HomeForm : Form
 
         if (selectedCellCount > 0)
         {
-            if (appointmentDataGrid.AreAllCellsSelected(true))
-            {
-                MessageBox.Show("Too many cells selected!", "Selected Cells", MessageBoxButtons.OK);
-            }
-            else
-            {
-                _selectedAppointment = appointmentDataGrid.SelectedCells[0].Value as Appointment;
-            }
+            _selectedAppointment = appointmentDataGrid.SelectedCells[0].Value as Appointment;
         }
     }
 
@@ -225,9 +211,17 @@ public partial class HomeForm : Form
         ];
 
     private void GenReportTwoLabel_Click(object sender, EventArgs e) =>
-        new ReportTwoForm(this, "Schedule By Customer", [.. GenerateSchedule()!]).Show();
+        new ReportTwoForm(this, "Schedule for Each User", [.. GenerateSchedule()!]).Show();
 
-    private List<User>? GenerateSchedule() => [.. new ClientScheduleContext().Users];
+    private Tuple<string, Appointment[]>[]? GenerateSchedule() => 
+        [
+            .. new ClientScheduleContext().Appointments
+            .GroupBy(a=>a.User)
+            .Select(a=> new Tuple<string, Appointment[]> (
+                a.Key.UserName,
+                a.Key.Appointments.ToArray()
+                )
+        )];
 
     private void GenReportThreeLabel_Click(object sender, EventArgs e) =>
         new ReportThreeForm(

@@ -43,8 +43,8 @@ partial class ReportThreeForm
         reportGridView = new()
         {
             Name = "reportGridView",
-            AutoSize = true,
-            Location = new Point(10, 30)
+            Location = new Point(10, 30),
+            Size = new Size(400,400)
         };
 
         okButton = new()

@@ -69,10 +69,10 @@ public partial class AppointmentCreateForm : Form
 
         foreach (var appointment in appointments)
         {
-            var intersect1 = appointment.Start <= start && appointment.End <= end;
-            var intersect2 = start <= appointment.Start && end <= appointment.End;
-            var intersect3 = start <= appointment.Start && appointment.End <= end;
-            var intersect4 = appointment.Start <= start && end <= appointment.End;
+            var intersect1 = appointment.Start <= start && appointment.End <= end && start <= appointment.End;
+            var intersect2 = start <= appointment.Start && end <= appointment.End && appointment.Start <= end;
+            var intersect3 = start <= appointment.Start && appointment.End <= end; // Interior
+            var intersect4 = appointment.Start <= start && end <= appointment.End; // Exterior
 
             if (intersect1 || intersect2 || intersect3 || intersect4)
                 return false;
@@ -112,12 +112,12 @@ public partial class AppointmentCreateForm : Form
             if (!parsed)
             {
                 message = "Failed to parse input from duration selector";
-                throw new FailedCustomerCreateException(message);
+                throw new FailedAppointmentCreateException(message);
             }
             if (!Appointment.CheckTextBoxes(inputs))
             {
                 message = "Failed to input strings into textboxes";
-                throw new FailedCustomerCreateException(message);
+                throw new FailedAppointmentCreateException(message);
             }
             if (!ValidateTime(estTime))
             {
@@ -159,7 +159,7 @@ public partial class AppointmentCreateForm : Form
             using (var context = new ClientScheduleContext())
             {
                 newAppointment.User = context.Users.Find(_user.UserId)!;
-                newAppointment.Customer = context.Customers.Find(_user.UserId)!;
+                newAppointment.Customer = context.Customers.Find(_customer.CustomerId)!;
 
                 context.Appointments.Add(newAppointment);
                 context.SaveChanges();

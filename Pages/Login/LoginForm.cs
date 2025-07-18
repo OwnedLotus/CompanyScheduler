@@ -46,7 +46,7 @@ public partial class LoginForm : Form
 
         _timer = new System.Windows.Forms.Timer
         {
-            Interval = 1000
+            Interval = 500
         };
         _timer.Tick += _timer_Tick;
         _timer.Start();
