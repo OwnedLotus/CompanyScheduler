@@ -195,33 +195,34 @@ public partial class HomeForm : Form
         ).Show();
 
     // Report generating functions
-    private List<Tuple<string, string, int>>? GenerateAppointmentTypesByMonth() =>
-        [
-            .. new ClientScheduleContext()
-                .Appointments.GroupBy(appointment => new
-                {
-                    appointment.Start.Month,
-                    appointment.Type,
-                })
-                .Select(appointment => new Tuple<string, string, int>(
-                    CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(appointment.Key.Month),
-                    appointment.Key.Type,
-                    appointment.Count()
-                )),
-        ];
+    private Tuple<string, Tuple<string, int>[]>[]? GenerateAppointmentTypesByMonth() =>
+        [.. new ClientScheduleContext().Appointments.GroupBy(
+            a => a.Start.Month).Select(monthGroup =>
+                new Tuple<string, Tuple<string, int>[]>
+                (
+                    new DateTime(1, monthGroup.Key, 1).ToString("MMMM"),
+                    monthGroup.GroupBy(a => a.Type)
+                        .Select(typeGroup =>
+                        new Tuple<string, int>
+                        (
+                            typeGroup.Key,
+                            typeGroup.Count()
+                        )).ToArray()
+                )
+
+            )];
+        
 
     private void GenReportTwoLabel_Click(object sender, EventArgs e) =>
         new ReportTwoForm(this, "Schedule for Each User", [.. GenerateSchedule()!]).Show();
 
-    private Tuple<string, Appointment[]>[]? GenerateSchedule() => 
-        [
-            .. new ClientScheduleContext().Appointments
-            .GroupBy(a=>a.User)
-            .Select(a=> new Tuple<string, Appointment[]> (
-                a.Key.UserName,
-                a.Key.Appointments.ToArray()
-                )
-        )];
+    private Tuple<string, Appointment[]>[]? GenerateSchedule() =>
+         [.. new ClientScheduleContext().Users.Include(u=>u.Appointments).Select(user =>
+            new Tuple<string, Appointment[]>
+            (
+                user.UserName,
+                user.Appointments.ToArray()
+            ))];
 
     private void GenReportThreeLabel_Click(object sender, EventArgs e) =>
         new ReportThreeForm(

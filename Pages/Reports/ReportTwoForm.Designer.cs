@@ -40,20 +40,14 @@ partial class ReportTwoForm
             Location = new Point(10, 10)
         };
 
-        userGridView = new()
-        {
-            Name = "reportGridView",
-            Location = new Point(10, 30),
-            Size = new Size(400,400)
-        };
-
-        userGridView.SelectionChanged += userGridView_SelectionChanged;
-
-        userAppointmentsGridView = new()
+        userAppointmentsListView = new()
         {
             Name = "userAppointmentsGridView",
             AutoSize = true,
-            Location = new Point(100, 30)
+            Location = new Point(100, 30),
+            Size = new Size(600, 300),
+            GridLines = true,
+            View = View.Details
         };
 
         okButton = new()
@@ -66,15 +60,13 @@ partial class ReportTwoForm
         okButton.Click += OkButton_Click;
 
         Controls.Add(reportsLabel);
-        Controls.Add(userGridView);
-        Controls.Add(userAppointmentsGridView);
+        Controls.Add(userAppointmentsListView);
         Controls.Add(okButton);
 
     }
 
 
     Label reportsLabel;
-    DataGridView userGridView;
-    DataGridView userAppointmentsGridView;
+    ListView userAppointmentsListView;
     Button okButton;
 }

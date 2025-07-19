@@ -19,17 +19,36 @@ public partial class ReportTwoForm : Form
         prevForm = form;
 
         reportsLabel.Text = reportName;
-        userGridView.DataSource = users;
-    }
+        userAppointmentsListView.Columns.Clear();
+        userAppointmentsListView.Columns.Add("User");
+        userAppointmentsListView.Columns.Add("Appointments",500);
 
-    private void userGridView_SelectionChanged(object sender, EventArgs e)
-    {
-        Int32 selectedCellCount = userGridView.GetCellCount(DataGridViewElementStates.Selected);
-
-        if (selectedCellCount > 0)
+        foreach (var outer in users)
         {
-                selectedUser = userGridView.SelectedCells[0].Value as User;
-                userAppointmentsGridView.DataSource = selectedUser?.Appointments;
+            string userName = outer.Item1;
+            var innerCollection = outer.Item2;
+
+            var isFirst = true;
+            foreach (var appointment in innerCollection)
+            {
+                var value = $"Appointment ID: {appointment.AppointmentId}," +
+                    $" Appointment Title: {appointment.Title}," +
+                    $"Appointment Time: {appointment.Start}";
+                ListViewItem item;
+
+                if (isFirst)
+                {
+                    item = new ListViewItem(userName);
+                    isFirst = false;
+                }
+                else
+                {
+                    item = new ListViewItem("");
+                }
+
+                item.SubItems.Add(value);
+                userAppointmentsListView.Items.Add(item);
+            }
         }
     }
 

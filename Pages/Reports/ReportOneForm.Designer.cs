@@ -44,7 +44,10 @@ partial class ReportOneForm
         {
             Name = "reportGridView",
             AutoSize = true,
-            Location = new Point(10, 30)
+            Location = new Point(10, 30),
+            GridLines = true,
+            View = View.Details,
+            Size = new Size(300,300)
         };
 
         okButton = new()
@@ -63,6 +66,6 @@ partial class ReportOneForm
     }
 
     Label reportsLabel;
-    DataGridView reportGridView;
+    ListView reportGridView;
     Button okButton;
 }
