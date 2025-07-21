@@ -29,7 +29,6 @@ public partial class CalendarForm : Form
     Customer _selectedCustomer = new();
     Appointment _selectedAppointment = new();
 
-    private System.Windows.Forms.Timer _timer;
     private TimeZoneInfo currentTimeZone = TimeZoneInfo.Local;
 
     // todo enable selection of customer
@@ -39,10 +38,7 @@ public partial class CalendarForm : Form
         InitializeComponent();
         LoadData();
 
-        _timer = new();
-        _timer.Interval = 500;
-        _timer.Tick += _timer_Tick;
-        _timer.Start();
+        SystemEvents.TimeChanged += SystemEvents_TimeChanged;
 
         _homeForm = homeForm;
         customerDataGrid.DataSource = _customers;
@@ -50,23 +46,17 @@ public partial class CalendarForm : Form
         calendar = cal;
         _currentUser = user;
 
-        SystemEvents.UserPreferenceChanged += PreferenceChanged;
     }
 
-    private void _timer_Tick(object? sender, EventArgs e)
+    private void SystemEvents_TimeChanged(object? sender, EventArgs e)
     {
         TimeZoneInfo.ClearCachedData();
 
-        if(!currentTimeZone.Equals(TimeZoneInfo.Local))
+        if (!currentTimeZone.Equals(TimeZoneInfo.Local))
         {
             LoadData();
             currentTimeZone = TimeZoneInfo.Local;
         }
-    }
-
-    private void PreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
-    {
-        LoadData();
     }
 
     private void DatePicker_ValueChanged(object sender, EventArgs e)
@@ -116,6 +106,8 @@ public partial class CalendarForm : Form
 
         _customers = [.. context.Customers];
         _appointments = [.. context.Appointments];
+        appointmentDataGrid.Refresh();
+        customerDataGrid.Refresh();
     }
 
     private void AppointmentDataGrid_SelectionChanged(object sender, EventArgs e)
@@ -168,7 +160,6 @@ public partial class CalendarForm : Form
 
         var addAppointmentForm = new AppointmentCreateForm(this, _currentUser, _selectedCustomer);
 
-        _timer.Stop();
 
         addAppointmentForm.AppointmentCreated += (sender, appointment) =>
         {
@@ -177,7 +168,6 @@ public partial class CalendarForm : Form
             MessageBox.Show(message, caption, MessageBoxButtons.OK);
             _appointments?.Add(appointment);
             _appointments?.ResetBindings();
-            _timer.Start();
         };
 
         addAppointmentForm.Show();
@@ -186,7 +176,6 @@ public partial class CalendarForm : Form
 
     private void UpdateAppointmentButton_Clicked(object sender, EventArgs e)
     {
-        _timer.Stop();
 
         if (_selectedAppointment is not null && _selectedCustomer is not null)
         {
@@ -202,7 +191,6 @@ public partial class CalendarForm : Form
                 _appointments?.Remove(old);
                 _appointments?.Add(app);
                 _appointments?.ResetBindings();
-                _timer.Start();
             };
             updateAppointment.Show();
             Hide();

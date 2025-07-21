@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Globalization;
+using System.Reflection;
 using System.Threading;
 using CompanyScheduler.Models;
 using CompanyScheduler.Models.Errors;
@@ -7,6 +8,7 @@ using CompanyScheduler.Pages.Calendar;
 using CompanyScheduler.Pages.Customers;
 using CompanyScheduler.Pages.Reports;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Win32;
 
 namespace CompanyScheduler.Pages;
 
@@ -22,7 +24,6 @@ public partial class HomeForm : Form
     private Appointment? _selectedAppointment;
     private Customer? _selectedCustomer;
     private TimeZoneInfo currentTimeZone = TimeZoneInfo.Local;
-    private System.Windows.Forms.Timer _timer;
 
     private User? _user;
 
@@ -33,16 +34,13 @@ public partial class HomeForm : Form
         CheckSoonAppointments(15);
         _user = user;
 
-        _timer = new();
-        _timer.Interval = 500;
-        _timer.Tick += _timer_Tick;
-        _timer.Start();
+        SystemEvents.TimeChanged += SystemEvents_TimeChanged;
 
         customerDataGrid.DataSource = customers;
         appointmentDataGrid.DataSource = appointments;
     }
 
-    private void _timer_Tick(object? sender, EventArgs e)
+    private void SystemEvents_TimeChanged(object? sender, EventArgs e)
     {
         TimeZoneInfo.ClearCachedData();
 
@@ -53,12 +51,22 @@ public partial class HomeForm : Form
         }
     }
 
+
     private void LoadData()
     {
         using var context = new ClientScheduleContext();
 
+        if (customers.Count == 0 || appointments.Count == 0)
+        {
+            customers.Clear();
+            appointments.Clear();
+        }
+
         customers = [.. context.Customers.Include(c => c.Address).ThenInclude(a => a.City).ThenInclude(c => c.Country)];
         appointments = [.. context.Appointments.Include(a => a.Customer).ThenInclude(c => c.Address).ThenInclude(a => a.City).ThenInclude(c => c.Country)];
+
+        customerDataGrid.Refresh();
+        appointmentDataGrid.Refresh();
     }
 
     private void CheckSoonAppointments(int span)
@@ -112,13 +120,11 @@ public partial class HomeForm : Form
             return;
         var CreateCustomer = new CustomerCreateForm(_user, this);
 
-        _timer.Stop();
 
         CreateCustomer.CustomerCreated += (sender, customer) =>
         {
             customers.Add(customer);
             customers.ResetBindings();
-            _timer.Start();
         };
 
         CreateCustomer.Show();
@@ -130,14 +136,12 @@ public partial class HomeForm : Form
         if (_selectedCustomer is null || _user is null)
             return;
 
-        _timer.Stop();
 
         var UpdateCustomer = new CustomerUpdateForm(_user, _selectedCustomer, this);
         UpdateCustomer.CustomerUpdated += (sender, customer) =>
         {
             customers.Add(customer);
             customers.ResetBindings();
-            _timer.Start();
         };
 
         UpdateCustomer.Show();
@@ -176,12 +180,10 @@ public partial class HomeForm : Form
             return;
         var calForm = new CalendarForm(this, calendar, _user);
         calForm.Show();
-        _timer.Stop();
 
         calForm.ScheduleUpdated += (sender, cal) =>
         {
             LoadData();
-            _timer.Start();
         };
 
         Hide();

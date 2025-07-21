@@ -7,6 +7,8 @@ public partial class Appointment
 {
     private DateTime _createDate;
     private DateTime _lastUpdate;
+    private DateTime _startDate;
+    private DateTime _endDate;
 
 
     public int AppointmentId { get; set; }
@@ -27,9 +29,9 @@ public partial class Appointment
 
     public string Url { get; set; } = null!;
 
-    public DateTime Start { get; set; }
+    public DateTime Start { get => _startDate.ToLocalTime(); set => _startDate = value.ToUniversalTime(); }
 
-    public DateTime End { get; set; }
+    public DateTime End { get => _startDate.ToLocalTime(); set => _startDate = value.ToUniversalTime(); }
 
     public DateTime CreateDate { get => _createDate.ToLocalTime(); set => _createDate = value.ToUniversalTime(); }
 

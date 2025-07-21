@@ -147,7 +147,7 @@ public partial class AppointmentCreateForm : Form
             newAppointment.Contact = contact;
             newAppointment.Type = type;
             newAppointment.Url = url;
-            newAppointment.Start = utcDate;
+            newAppointment.Start = DateTime.Now;
             newAppointment.End = newAppointment
                 .Start.AddMinutes(selectedDuration)
                 .ToUniversalTime();
