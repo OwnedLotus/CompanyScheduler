@@ -31,7 +31,7 @@ public partial class Appointment
 
     public DateTime Start { get => _startDate.ToLocalTime(); set => _startDate = value.ToUniversalTime(); }
 
-    public DateTime End { get => _startDate.ToLocalTime(); set => _startDate = value.ToUniversalTime(); }
+    public DateTime End { get => _endDate.ToLocalTime(); set => _endDate = value.ToUniversalTime(); }
 
     public DateTime CreateDate { get => _createDate.ToLocalTime(); set => _createDate = value.ToUniversalTime(); }
 
@@ -44,7 +44,7 @@ public partial class Appointment
     public virtual Customer Customer { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
-    
+
     public static bool CheckTextBoxes(string[] input)
     {
         foreach (string inputItem in input)

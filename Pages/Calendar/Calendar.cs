@@ -4,6 +4,7 @@ using CompanyScheduler.Models;
 using CompanyScheduler.Models.Errors;
 using CompanyScheduler.Pages.Calendar.Appointments;
 using CompanyScheduler.Pages.Calendar.Appointments.Show;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32;
 
 namespace CompanyScheduler.Pages.Calendar;
@@ -22,8 +23,8 @@ public partial class CalendarForm : Form
     BindingList<Customer> _customers = new();
     BindingList<Appointment> _appointments = new();
 
-    private Customer? selectedCustomer;
-    private Appointment? selectedAppointment;
+    private Customer? selectedCustomer = null;
+    private Appointment? selectedAppointment = null;
 
     User _currentUser;
     Customer _selectedCustomer = new();
@@ -41,11 +42,8 @@ public partial class CalendarForm : Form
         SystemEvents.TimeChanged += SystemEvents_TimeChanged;
 
         _homeForm = homeForm;
-        customerDataGrid.DataSource = _customers;
-        appointmentDataGrid.DataSource = _appointments;
         calendar = cal;
         _currentUser = user;
-
     }
 
     private void SystemEvents_TimeChanged(object? sender, EventArgs e)
@@ -96,18 +94,15 @@ public partial class CalendarForm : Form
 
     private void LoadData()
     {
-        if (_customers.Count == 0 || _appointments.Count == 0)
-        {
-            _customers.Clear();
-            _appointments.Clear();
-        }
-
         using var context = new ClientScheduleContext();
 
-        _customers = [.. context.Customers];
-        _appointments = [.. context.Appointments];
-        appointmentDataGrid.Refresh();
-        customerDataGrid.Refresh();
+        TimeZoneInfo.ClearCachedData();
+
+        _customers = [.. context.Customers.Include(c => c.Address).ThenInclude(a => a.City).ThenInclude(c => c.Country)];
+        _appointments = [.. context.Appointments.Include(a => a.Customer).ThenInclude(c => c.Address).ThenInclude(a => a.City).ThenInclude(c => c.Country)];
+
+        appointmentDataGrid.DataSource = _appointments;
+        customerDataGrid.DataSource = _customers;
     }
 
     private void AppointmentDataGrid_SelectionChanged(object sender, EventArgs e)
@@ -176,25 +171,27 @@ public partial class CalendarForm : Form
 
     private void UpdateAppointmentButton_Clicked(object sender, EventArgs e)
     {
-
-        if (_selectedAppointment is not null && _selectedCustomer is not null)
+        if (_selectedAppointment is null || _selectedAppointment.AppointmentId == 0)
         {
-            var updateAppointment = new AppointmentUpdateForm(
-                this,
-                _selectedAppointment,
-                _currentUser
-            );
-            updateAppointment.AppointmentUpdated += (sender, appointments) =>
-            {
-                var (old, app) = appointments;
-
-                _appointments?.Remove(old);
-                _appointments?.Add(app);
-                _appointments?.ResetBindings();
-            };
-            updateAppointment.Show();
-            Hide();
+            MessageBox.Show("No Appointment Selected", "Please Select Appointment", MessageBoxButtons.OK);
+            return;
         }
+
+        var updateAppointment = new AppointmentUpdateForm(
+            this,
+            _selectedAppointment,
+            _currentUser
+        );
+        updateAppointment.AppointmentUpdated += (sender, appointments) =>
+        {
+            var (old, app) = appointments;
+
+            _appointments?.Remove(old);
+            _appointments?.Add(app);
+            _appointments?.ResetBindings();
+        };
+        updateAppointment.Show();
+        Hide();
     }
 
     private void DeleteAppointmentButton_Clicked(object sender, EventArgs e)

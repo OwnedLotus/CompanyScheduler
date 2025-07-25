@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Globalization;
-using System.Reflection;
-using System.Threading;
 using CompanyScheduler.Models;
 using CompanyScheduler.Models.Errors;
 using CompanyScheduler.Pages.Calendar;
@@ -35,9 +33,6 @@ public partial class HomeForm : Form
         _user = user;
 
         SystemEvents.TimeChanged += SystemEvents_TimeChanged;
-
-        customerDataGrid.DataSource = customers;
-        appointmentDataGrid.DataSource = appointments;
     }
 
     private void SystemEvents_TimeChanged(object? sender, EventArgs e)
@@ -56,17 +51,13 @@ public partial class HomeForm : Form
     {
         using var context = new ClientScheduleContext();
 
-        if (customers.Count == 0 || appointments.Count == 0)
-        {
-            customers.Clear();
-            appointments.Clear();
-        }
+        TimeZoneInfo.ClearCachedData();
 
         customers = [.. context.Customers.Include(c => c.Address).ThenInclude(a => a.City).ThenInclude(c => c.Country)];
         appointments = [.. context.Appointments.Include(a => a.Customer).ThenInclude(c => c.Address).ThenInclude(a => a.City).ThenInclude(c => c.Country)];
 
-        customerDataGrid.Refresh();
-        appointmentDataGrid.Refresh();
+        customerDataGrid.DataSource = customers;
+        appointmentDataGrid.DataSource = appointments;
     }
 
     private void CheckSoonAppointments(int span)

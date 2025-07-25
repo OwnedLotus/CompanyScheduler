@@ -95,8 +95,7 @@ public partial class AppointmentCreateForm : Form
 
             var selectedDate = DateOnly.FromDateTime(datePicker.Value);
             var selectedTime = TimeOnly.FromDateTime(timePicker.Value);
-            var selectedDateTime = new DateTime(selectedDate, selectedTime);
-            selectedDateTime = DateTime.SpecifyKind(selectedDateTime, DateTimeKind.Local);
+            var selectedDateTime = new DateTime(selectedDate, selectedTime, DateTimeKind.Local);
 
             var parsed = int.TryParse(durationPicker.Text.Trim(), out int selectedDuration);
 
@@ -104,8 +103,10 @@ public partial class AppointmentCreateForm : Form
 
             var utcDate = TimeZoneInfo.ConvertTimeToUtc(selectedDateTime);
 
-            var estDate = DateOnly.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(utcDate, est));
-            var estTime = TimeOnly.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(utcDate, est));
+            var estDT = TimeZoneInfo.ConvertTimeFromUtc(utcDate, est);
+
+            var estDate = DateOnly.FromDateTime(estDT);
+            var estTime = TimeOnly.FromDateTime(estDT);
 
             string message = "Failed to Parse Appointment";
 
@@ -147,12 +148,10 @@ public partial class AppointmentCreateForm : Form
             newAppointment.Contact = contact;
             newAppointment.Type = type;
             newAppointment.Url = url;
-            newAppointment.Start = DateTime.Now;
-            newAppointment.End = newAppointment
-                .Start.AddMinutes(selectedDuration)
-                .ToUniversalTime();
-            newAppointment.CreateDate = DateTime.Now;
-            newAppointment.LastUpdate = DateTime.Now;
+            newAppointment.Start = utcDate;
+            newAppointment.End = utcDate.AddMinutes(selectedDuration);
+            newAppointment.CreateDate = DateTime.UtcNow;
+            newAppointment.LastUpdate = DateTime.UtcNow;
             newAppointment.LastUpdateBy = _user.UserName;
             newAppointment.CreatedBy = _user.UserName;
 
